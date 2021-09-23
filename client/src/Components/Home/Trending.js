@@ -1,0 +1,120 @@
+import React, { useState, useEffect } from 'react';
+import { Movies } from '../global/Movies';
+import styled from 'styled-components';
+import dummyData from '../global/dummyData';
+
+const Data = [
+    {
+        title:"The Suicide Squad(2021)",
+        src:"https://m.media-amazon.com/images/M/MV5BMjM1OTMxNzUyM15BMl5BanBnXkFtZTgwNjYzMTIzOTE@._V1_.jpg",
+        link:"/suicidesquad",
+        genre:"Action",
+        rating:9.2
+    },
+    {
+        title:"Venom(2021)",
+        src:"https://m.media-amazon.com/images/M/MV5BNzAwNzUzNjY4MV5BMl5BanBnXkFtZTgwMTQ5MzM0NjM@._V1_.jpg",
+        link:"/venom",
+        genre:"Sci-fi",
+        rating:8.2
+    },
+    {
+        title:"Cindrella(2021)",
+        src:"https://m.media-amazon.com/images/M/MV5BZTk3ZTEzNGUtZTcwYy00NmRmLWFhMGYtZjA4NWY1ZWI4MzMyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1000_.jpg",
+        link:"/cindrella",
+        genre:"Adventure",
+        rating:8
+    },
+    {
+        title:"Peaky Blinders",
+        src:"https://cdn.shopify.com/s/files/1/0969/9128/products/PeakyBlinders-ThomasShelby-GarrisonBombing-NetflixTVShow-ArtPoster_a29a5be9-9611-43d9-b415-18655f60c629.jpg?v=1619864667",
+        link:"/peaky-blinders",
+        genre:"Crime",
+        rating:9.7
+    },
+    {
+        title:"No time to die",
+        src:"https://m.media-amazon.com/images/M/MV5BYWQ2NzQ1NjktMzNkNS00MGY1LTgwMmMtYTllYTI5YzNmMmE0XkEyXkFqcGdeQXVyMjM4NTM5NDY@._V1_.jpg",
+        link:"/no-time-to-die",
+        genre:"Action",
+        rating:9
+    },
+    {
+        title:"Bhoot Police",
+        src:"https://m.media-amazon.com/images/M/MV5BNDE3OGNjYjUtY2FiYy00MTE4LWJhNWQtODBmNGZhMGU2MDExXkEyXkFqcGdeQXVyMTI1NDAzMzM0._V1_.jpg",
+        link:"/bhoot-police",
+        genre:"Horror",
+        rating:8.3
+    },
+    {
+        title:"Sex Education",
+        src:"https://m.media-amazon.com/images/M/MV5BODhmN2Q4ZjUtNzE5Ni00YWQxLThmYjYtM2NkNDEwNmFhMGY3XkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_FMjpg_UX1000_.jpg",
+        link:"/sex-education",
+        genre:"Romance",
+        rating:9.4
+    },
+    {
+        title:"Candy Man",
+        src:"https://m.media-amazon.com/images/M/MV5BMzc4YzBiZTItMDVhYi00MzhkLTllNmItZTgyYTFkY2E2MGU3XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg",
+        link:"/candyman",
+        genre:"Thriller",
+        rating:9.4
+    },
+    {
+        title:"Money Heist",
+        src:"https://m.media-amazon.com/images/M/MV5BNDJkYzY3MzMtMGFhYi00MmQ4LWJkNTgtZGNiZWZmMTMxNzdlXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_FMjpg_UX1000_.jpg",
+        link:"/money-heist",
+        genre:"Heist",
+        rating:9.6
+    },
+    {
+        title:"Mr Robot",
+        src:"https://m.media-amazon.com/images/M/MV5BMzgxMmQxZjQtNDdmMC00MjRlLTk1MDEtZDcwNTdmOTg0YzA2XkEyXkFqcGdeQXVyMzQ2MDI5NjU@._V1_.jpg",
+        link:"/mr-robot",
+        genre:"Psycho",
+        rating:9.3
+    }
+]
+
+const media = (width) => `@media only screen and (max-width:${width}px)`;
+
+const Parent = styled.div`
+    position:relative;
+    top:-20px;
+    width:95vw;
+    margin:auto;
+`;
+
+const Title = styled.p`
+    font-size:30px;
+    ${media(600)}{
+        font-size:25px;
+    }
+`;
+
+const Hr = styled.hr`
+    position:relative;
+    top:-15px;
+    width:85vw;
+    float:left;
+    border:1px solid white;
+    ${media(600)}{
+        width:60vw;
+    }
+`;
+
+const Trending = () =>{
+    const [movies, setMovies] = useState(dummyData);
+    useEffect(() =>{
+        setTimeout(() => setMovies(Data), 6000);
+    }, [])
+    return(
+        <Parent>
+            <Title>Trending</Title>
+            <Hr /><br />
+            <Movies payload={movies} />
+        </Parent>
+    )
+};
+
+export default Trending;

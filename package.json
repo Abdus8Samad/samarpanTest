@@ -1,0 +1,43 @@
+{
+  "name": "samarpan",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "Movie Review Website",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abdus8Samad/sem3project.git"
+  },
+  "keywords": [
+    "css",
+    "html",
+    "js",
+    "mern",
+    "webdev",
+    "website"
+  ],
+  "author": "Abdus, Vansh, Ravi, Kunal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Abdus8Samad/sem3project/issues"
+  },
+  "homepage": "https://github.com/Abdus8Samad/sem3project#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "env": "0.0.2",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "gzip": "^0.1.0",
+    "mongoose": "^6.0.7",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.12",
+    "passport": "^0.4.1",
+    "path": "^0.12.7"
+  }
+}
