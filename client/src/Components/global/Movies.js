@@ -65,7 +65,7 @@ const LoadingAnimation = keyframes`
 
 const ImagePlaceholder = styled.div`
     width:100%;
-    height:250px;
+    height:300px;
     background:black;
     opacity:0;
     animation:${LoadingAnimation} 2s linear 0s infinite normal;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
@@ -6,7 +6,10 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom';
 import FaceIcon from '@mui/icons-material/Face';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { withRouter } from 'react-router';
+import { useSetUser } from '../Contexts/User';
 import axios from 'axios';
+import { useSetAlert } from '../Contexts/Alerts';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -22,7 +25,7 @@ const Img = styled.img`
     filter:brightness(50%);
 `;
     
-const Form = styled.div`
+const Form = styled.form`
     position:relative;
     width:52vw;
     height:100vh;
@@ -60,28 +63,33 @@ const FormBox = styled.div`
     }
 `;
 
-const Button = styled(Link)`
+const Button = styled.input`
     padding:10px;
     text-align:center;
     font-size:2vw;
-    opacity:0.8;
+    opacity:0.85;
     transition:all 0.2s ease;
     border:2px solid white;
-    color:white;
+    color:white !important;
     border-radius:7px;
+    background:none;
     &:hover{
+        cursor:pointer;
         opacity:1;
     }
     ${media(720)}{
-        &.register{
+        &.login{
             font-size:30px;
         }
     }
 `;
 
-const Top = styled.p`
+const Top = styled(Link)`
     font-size:30px;
+    display:block;
     text-align:center;
+    color:rgba(255, 255, 255, 0.8);
+    margin:20px;
 `;
 
 const Bottom = styled.p`
@@ -94,7 +102,9 @@ const Bottom = styled.p`
     }
 `;
 
-const Register = () =>{
+const Register = (props) =>{
+    const setUser = useSetUser();
+    const setAlert = useSetAlert();
     const [values, setValues] = useState({
         username: '',
         password: '',
@@ -116,30 +126,49 @@ const Register = () =>{
         setValues({...values, submit:true});
         let { username, password, avatar } = values;
         axios.post('/register', { username, password, avatar })
-        .then(msg =>{
-            console.log(msg);
+        .then(res =>{
+            const { user, status } = res.data;
+            if(status === 409){
+                setAlert(["warning", `Username ${user.username} Already Exists`]);
+                setValues({...values, submit:false});
+            } else {
+                setUser(user);
+                setAlert(["success", `Welcome ${user.username}`]);
+                props.history.goBack();
+            }
         })
-        .catch(err => console.log(err));
+        .catch(err =>{
+            console.log(err);
+            setAlert(["error", `${err.response.status} Internal Server Error !`]);
+            setValues({...values, submit:false});
+        });
     }
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
     const catchEnter = (event) =>{
         if(event.which === 13){
-            submit();
+            document.querySelector('input[type="submit"]').click();
         }
     }
+    useEffect(() =>{
+
+    }, [])
     return(
         <Parent onKeyPress={catchEnter}>
             <Poster>
                 <Img src="https://wallpaperaccess.com/full/3988284.jpg" alt="Movies" />
             </Poster>
-            <Form>
+            <Form onSubmit={(e) =>{
+                e.preventDefault();
+                submit();
+            }}>
                 <FormBox>
-                    <Top>
+                    <Top to='/'>
                         Samarpan&trade;
                     </Top>
                     <TextField
+                        required
                         className="username"
                         status="red"
                         color="secondary"
@@ -153,8 +182,11 @@ const Register = () =>{
                                 <InputAdornment position="start">
                                     <AccountCircle />
                                 </InputAdornment>
-                        ),
-                    }}
+                            ),
+                        }}
+                        inputProps={{
+                            maxlength:20
+                        }}
                     />
                     <TextField
                         className="avatar"
@@ -178,11 +210,16 @@ const Register = () =>{
                         color="secondary"
                         className="password"
                     >
-                        <InputLabel htmlFor="adornment-password">Password</InputLabel>
+                        <InputLabel required htmlFor="adornment-password">Password</InputLabel>
                             <Input
+                                required
                                 id="adornment-password"
                                 type={values.showPassword ? 'text' : 'password'}
                                 onChange={handleChange('password')}
+                                inputProps={{
+                                    pattern:"(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}",
+                                    title:"Password should be at least 8 chars long with at least one lowercase letter, uppercase letter, number and a special character"
+                                }}
                                 startAdornment={
                                     <InputAdornment position="start">
                                         <VpnKeyIcon />
@@ -205,10 +242,10 @@ const Register = () =>{
                     </FormControl>
                     <div style={{"marginTop":"20px","textAlign":"center"}}>
                         <Button
-                            to='#'
-                            className="register"
-                            onClick={() => submit()}
-                        >SignUp</Button>
+                            type="submit"
+                            className="login"
+                            value="SignUp"
+                        />
                     </div>
                     <Bottom>
                         Already Signed Up ? <Link to='/login'>Login</Link> instead.
@@ -232,4 +269,4 @@ const Register = () =>{
     )
 }
 
-export default Register;
+export default withRouter(Register);

@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Route, Switch } from "react-router";
+import { Redirect, Route, Switch } from "react-router";
 import { Helmet } from 'react-helmet';
+import axios from "axios";
 import styled from 'styled-components';
 import Home from "./Home/Home";
 import Login from "./Login/Login";
+import Register from "./Register/Register";
+import Profile from "./Profile/Profile";
 import TopBar from './TopBar';
 import Footer from './Footer';
+import { useSetUser, useUser } from "./Contexts/User";
+import { useSetAlert, useAlert } from "./Contexts/Alerts";
+import { Snackbar } from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
-import './styles/global.scss';
-import Register from "./Register/Register";
-import axios from "axios";
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -40,6 +44,10 @@ const ScrollToTop = styled.a`
 const App = () => {
     const [loginPage, setLoginPage] = useState(false);
     const [topTitle, setTopTitle] = useState("Home");
+    const User = useUser();
+    const setUser = useSetUser();
+    const setAlert = useSetAlert();
+    const Alert = useAlert();
     const getElemDistance = ( elem ) => {
         var location = 0;
         if (elem.offsetParent) {
@@ -51,11 +59,8 @@ const App = () => {
         return location >= 0 ? location : 0;
     };
     const visible = function(elem) {
-        var diff = 350;
+        var diff = 450;
         var top = getElemDistance(elem);
-        if(window.innerWidth <= 800){
-            diff = 450;
-        }
         return (top <= window.scrollY + (diff));
     };
     const scrollingEffect = () =>{
@@ -71,15 +76,43 @@ const App = () => {
             }
         }
     }
+    const handleAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlert("");
+    };
     useEffect(() =>{
+        axios.get('/getUser')
+        .then(res =>{
+            setUser(res.data);
+        })
+        .catch(err =>{
+            console.log(err);
+            setAlert(["error", err.response.status + " Internal Server Error !"]);
+        })
         scrollingEffect();
         window.addEventListener('scroll',scrollingEffect);
+        console.log("home");
     }, []);
     const MyRoute = (props) =>{
         return(
             <Route {...props}>
                 {() =>{
-                        if(props.path === "/login" || props.path === "/register") setLoginPage(true);
+                        if(props.path === "/profile"){
+                            if(User === ""){
+                                setTopTitle('Home');
+                                setLoginPage(false);
+                                return <Redirect to='/' />;
+                            } else setLoginPage(true);
+                        }
+                        if(props.path === "/login" || props.path === "/register"){
+                            if(User !== ""){
+                                setTopTitle('Home');
+                                setLoginPage(false);
+                                return <Redirect to='/' />;
+                            } else setLoginPage(true);
+                        }
                         else setLoginPage(false);
                         setTopTitle(props.title);
                         return props.component;
@@ -95,6 +128,7 @@ const App = () => {
                 <Switch>
                     <MyRoute exact path="/login" title="Login" component={<Login />} />
                     <MyRoute exact path="/register" title="SignUp" component={<Register />} />
+                    <MyRoute exact path="/profile" title="Profile" component={<Profile />} />
                     <MyRoute exact path="*" component={<Home />} title="Home" />
                 </Switch>
             </MainBody>
@@ -105,6 +139,16 @@ const App = () => {
                     <Footer />
                 </>
             )}
+            {
+                (Alert === "") ? ("") :
+                (
+                    <Snackbar open={Alert !== ""} autoHideDuration={6000} onClose={handleAlertClose} sx={{opacity:0.9}}>
+                        <MuiAlert elevation={6} variant="filled" onClose={handleAlertClose} severity={Alert[0]} sx={{ width: '100%'}}>
+                            {Alert[1]}
+                        </MuiAlert>
+                    </Snackbar>    
+                )
+            }
         </div>
     )
 }

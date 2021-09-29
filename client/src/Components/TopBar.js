@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { useUser } from './Contexts/User';
 import uuimg from './images/UUser.png';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
@@ -8,15 +9,15 @@ const media = (width) => `@media only screen and (max-width:${width}px)`;
 const Parent = styled.div`
     position:fixed;
     left:50%;
-    top:7px;
+    top:0;
     z-index:100;
     font-size:120%;
     background:rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(10px);
     border-radius:25px;
-    padding:0 0.8%;
+    padding:0 0.6%;
     color:white !important;
-    transform:translate(-50%, 0);
+    transform:translate(-50%, 0) scale(0.8);
     width:65vw;
     ${media(800)}{
         font-size:100%;
@@ -38,12 +39,12 @@ const List = styled.div`
     align-items:center;
     justify-content:space-evenly;
 `;
-    
+
 const Links = styled(Link)`
     color:white;
     padding: 2% 3%;
     border-radius:15px;
-    transition:all 0.2s ease-in-out;
+    transition:all 0.2s ease;
     &:not(.user):hover{
         box-shadow: 0 0 20px black;
         transform: scale(1.1);
@@ -51,7 +52,7 @@ const Links = styled(Link)`
         color:black;
     }
     &.user{
-        padding: 1.25% 2.5%;
+        padding: 1% 2.2%;
         text-align:center;
     }
     ${media(600)}{
@@ -62,8 +63,8 @@ const Links = styled(Link)`
     }
 `;
 
-const User = styled.img`
-    width:30px;
+const UserImg = styled.img`
+    width:40px;
     max-width:60px;
     border-radius:100%;
     position:relative;
@@ -81,6 +82,7 @@ const User = styled.img`
 `;
 
 const TopBar = () =>{
+    const User = useUser();
     return(
         <Parent>
             <List>
@@ -88,7 +90,7 @@ const TopBar = () =>{
                 <Links to='/Movies'>Movies</Links>
                 <Links to='/Anime'>Anime</Links>
                 <Links to='/Series'>Series</Links>
-                <Links to='/login' className="user"><User src={uuimg} alt="USER" /></Links>
+                <Links to={(User === "") ? "/login" : "/profile"} className="user"><UserImg src={(User !== "") ? (User.avatar) : ("https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png")} /></Links>
             </List>
         </Parent>
     )

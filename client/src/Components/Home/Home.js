@@ -247,8 +247,7 @@ const Home = () =>{
         )
     }
     const sizeChange = () =>{
-        setWidth(window.innerWidth);
-        if(width <= 600){
+        if(window.innerWidth <= 600){
             setLucifer(luciferPotrait);
         } else {
             setLucifer(luciferPoster);

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useSetUser } from '../Contexts/User';
+import { withRouter } from 'react-router';
 import axios from 'axios';
+import { useSetAlert } from '../Contexts/Alerts';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -21,7 +24,7 @@ const Img = styled.img`
     filter:brightness(50%);
 `;
     
-const Form = styled.div`
+const Form = styled.form`
     position:relative;
     width:52vw;
     height:100vh;
@@ -56,16 +59,18 @@ const FormBox = styled.div`
     }
 `;
 
-const Button = styled(Link)`
+const Button = styled.input`
     padding:10px;
     text-align:center;
     font-size:2vw;
-    opacity:0.8;
+    opacity:0.85;
     transition:all 0.2s ease;
     border:2px solid white;
-    color:white;
+    color:white !important;
     border-radius:7px;
+    background:none;
     &:hover{
+        cursor:pointer;
         opacity:1;
     }
     ${media(720)}{
@@ -75,9 +80,12 @@ const Button = styled(Link)`
     }
 `;
 
-const Top = styled.p`
+const Top = styled(Link)`
     font-size:30px;
+    display:block;
     text-align:center;
+    color:rgba(255, 255, 255, 0.8);
+    margin:20px;
 `;
 
 const Bottom = styled.p`
@@ -90,7 +98,9 @@ const Bottom = styled.p`
     }
 `;
 
-const Login = () =>{
+const Login = (props) =>{
+    const setUser = useSetUser();
+    const setAlert = useSetAlert();
     const [values, setValues] = useState({
         username: '',
         password: '',
@@ -115,14 +125,24 @@ const Login = () =>{
         setValues({...values, submit:true});
         let { username, password } = values;
         axios.post('/login', { username, password })
-        .then(msg =>{
-            console.log(msg);
+        .then(res =>{
+            const { user } = res.data;
+            setUser(user);
+            setAlert(["success", `Welcome ${user.username} !`]);
+            props.history.goBack();
         })
-        .catch(err => console.log(err));
+        .catch(err =>{
+            if(err.response.status === 401){
+                setAlert(["error", "Incorrect Username Or Password !"]);
+            } else {
+                setAlert(["error", `${err.response.status} Internal Server Error !`]);
+            }
+            setValues({...values, submit:false});
+        });
     }
     const catchEnter = (event) =>{
         if(event.which === 13){
-            submit();
+            document.querySelector('input[type="submit"]').click();
         }
     }
     return(
@@ -130,12 +150,16 @@ const Login = () =>{
             <Poster>
                 <Img src="https://wallpaperaccess.com/full/3988284.jpg" alt="Movies" />
             </Poster>
-            <Form>
+            <Form onSubmit={(e) =>{
+                e.preventDefault();
+                submit();
+            }}>
                 <FormBox>
-                    <Top>
+                    <Top to='/'>
                         Samarpan&trade;
                     </Top>
                     <TextField
+                        required
                         className="username"
                         color="secondary"
                         id="input-with-icon-textfield"
@@ -148,15 +172,20 @@ const Login = () =>{
                                 <InputAdornment position="start">
                                     <AccountCircle />
                                 </InputAdornment>
-                        ),
-                    }}
+                            ),
+                        }}
+                        inputProps={{
+                            maxlength:20
+                        }}
                     />
                     <FormControl sx={{"margin":"35px 0", "width":"100%"}} variant="standard" color="secondary">
-                        <InputLabel htmlFor="adornment-password">Password</InputLabel>
+                        <InputLabel required htmlFor="adornment-password">Password</InputLabel>
                             <Input
+                                required
                                 id="adornment-password"
                                 type={values.showPassword ? 'text' : 'password'}
                                 onChange={handleChange('password')}
+                                label="Password"
                                 startAdornment={
                                     <InputAdornment position="start">
                                         <VpnKeyIcon />
@@ -174,17 +203,14 @@ const Login = () =>{
                                     </IconButton>
                                 </InputAdornment>
                                 }
-                                label="Password"
                             />
                     </FormControl>
                     <div style={{"marginTop":"20px","textAlign":"center"}}>
                         <Button
-                            to='#'
+                            type="submit"
                             className="login"
-                            onClick={() => submit()}
-                        >
-                            Login
-                        </Button>
+                            value="Login"
+                        />
                     </div>
                     <Bottom>
                         Not Signed Up Yet ? <Link to='/register'>Sign Up</Link> instead.
@@ -208,4 +234,4 @@ const Login = () =>{
     )
 }
 
-export default Login;
+export default withRouter(Login);
