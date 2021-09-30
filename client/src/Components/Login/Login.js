@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useSetUser } from '../Contexts/User';
 import { withRouter } from 'react-router';
 import axios from 'axios';
-import { useSetAlert } from '../Contexts/Alerts';
+import { useSnackbar } from 'notistack';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -99,14 +99,14 @@ const Bottom = styled.p`
 `;
 
 const Login = (props) =>{
-    const setUser = useSetUser();
-    const setAlert = useSetAlert();
+    const { enqueueSnackbar } = useSnackbar();
     const [values, setValues] = useState({
         username: '',
         password: '',
         showPassword: false,
         submit:false
     });
+    const setUser = useSetUser();
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
     };
@@ -122,28 +122,29 @@ const Login = (props) =>{
         event.preventDefault();
     };
     const submit = () =>{
+        console.log("Submit");
         setValues({...values, submit:true});
         let { username, password } = values;
         axios.post('/login', { username, password })
         .then(res =>{
             const { user } = res.data;
             setUser(user);
-            setAlert(["success", `Welcome ${user.username} !`]);
-            props.history.goBack();
+            enqueueSnackbar(`Welcome ${user.username} !`, { variant : "success" });
+            props.history.push("/");
         })
         .catch(err =>{
             if(err.response.status === 401){
-                setAlert(["error", "Incorrect Username Or Password !"]);
+                enqueueSnackbar("Incorrect Username Or Password !", { variant : "error" });
             } else {
-                setAlert(["error", `${err.response.status} Internal Server Error !`]);
+                enqueueSnackbar(`${err.response.status} Internal Server Error !`, { variant : "error" });
             }
             setValues({...values, submit:false});
         });
     }
     const catchEnter = (event) =>{
-        if(event.which === 13){
-            document.querySelector('input[type="submit"]').click();
-        }
+        // if(event.which === 13){
+        //     document.querySelector('input[type="submit"]').click();
+        // }
     }
     return(
         <Parent onKeyPress={catchEnter}>

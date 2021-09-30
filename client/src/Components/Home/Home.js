@@ -132,6 +132,9 @@ const Score = styled.table`
             font-size:10vw;
         }
     }
+    ${media(400)}{
+        top:500px;
+    }
 `;
 
 const Title = styled.p`

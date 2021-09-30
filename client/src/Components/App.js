@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Redirect, Route, Switch } from "react-router";
+import { Redirect, Route, Switch, withRouter } from "react-router";
 import { Helmet } from 'react-helmet';
 import axios from "axios";
 import styled from 'styled-components';
@@ -10,10 +10,9 @@ import Profile from "./Profile/Profile";
 import TopBar from './TopBar';
 import Footer from './Footer';
 import { useSetUser, useUser } from "./Contexts/User";
-import { useSetAlert, useAlert } from "./Contexts/Alerts";
-import { Snackbar } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
+import { useSnackbar } from "notistack";
+import { usePath, useSetPath } from "./Contexts/Path";
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -41,13 +40,15 @@ const ScrollToTop = styled.a`
     }
 `;
 
-const App = () => {
+const App = (props) => {
+    const { enqueueSnackbar } = useSnackbar();
     const [loginPage, setLoginPage] = useState(false);
     const [topTitle, setTopTitle] = useState("Home");
+    const [profilePage, setprofilePage] = useState(false);
     const User = useUser();
     const setUser = useSetUser();
-    const setAlert = useSetAlert();
-    const Alert = useAlert();
+    const path = usePath();
+    const setPath = useSetPath();
     const getElemDistance = ( elem ) => {
         var location = 0;
         if (elem.offsetParent) {
@@ -65,8 +66,14 @@ const App = () => {
     };
     const scrollingEffect = () =>{
         var scrollToTop = document.querySelector('a.scrollToTop');
-        if(window.scrollY <= 40) scrollToTop.style.opacity = 0;
-        else scrollToTop.style.opacity = 0.75;
+        if(window.scrollY <= 40){
+            scrollToTop.style.opacity = 0;
+            scrollToTop.style.visibility = "hidden";
+        }
+        else {
+            scrollToTop.style.opacity = 0.75;
+            scrollToTop.style.visibility = "visible";
+        }
         var scrollEffect = document.querySelectorAll('.scrollEffect');
         for(var x = 0;x < scrollEffect.length;x++){
             if(visible(scrollEffect[x])){
@@ -76,12 +83,6 @@ const App = () => {
             }
         }
     }
-    const handleAlertClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setAlert("");
-    };
     useEffect(() =>{
         axios.get('/getUser')
         .then(res =>{
@@ -89,33 +90,31 @@ const App = () => {
         })
         .catch(err =>{
             console.log(err);
-            setAlert(["error", err.response.status + " Internal Server Error !"]);
+            enqueueSnackbar(err.response.status + " Internal Server Error !", { variant : "error" });
         })
         scrollingEffect();
         window.addEventListener('scroll',scrollingEffect);
-        console.log("home");
     }, []);
-    const MyRoute = (props) =>{
+    const MyRoute = (attr) =>{
         return(
-            <Route {...props}>
+            <Route {...attr}>
                 {() =>{
-                        if(props.path === "/profile"){
-                            if(User === ""){
-                                setTopTitle('Home');
-                                setLoginPage(false);
-                                return <Redirect to='/' />;
-                            } else setLoginPage(true);
+                        if(attr.path.substr(0, 8) === "/profile"){
+                            setprofilePage(true);
+                        } else {
+                            setprofilePage(false);
+                            if(attr.path === "/login" || attr.path === "/register"){
+                                if(User !== ""){
+                                    setTopTitle('Home');
+                                    setLoginPage(false);
+                                    props.history.push("/");
+                                } else setLoginPage(true);
+                            }
+                            else setLoginPage(false);
                         }
-                        if(props.path === "/login" || props.path === "/register"){
-                            if(User !== ""){
-                                setTopTitle('Home');
-                                setLoginPage(false);
-                                return <Redirect to='/' />;
-                            } else setLoginPage(true);
-                        }
-                        else setLoginPage(false);
-                        setTopTitle(props.title);
-                        return props.component;
+                        // path.push(attr.path);
+                        setTopTitle(attr.title);
+                        return attr.component;
                     }
                 }
             </Route>
@@ -128,29 +127,19 @@ const App = () => {
                 <Switch>
                     <MyRoute exact path="/login" title="Login" component={<Login />} />
                     <MyRoute exact path="/register" title="SignUp" component={<Register />} />
-                    <MyRoute exact path="/profile" title="Profile" component={<Profile />} />
+                    <MyRoute exact path="/profile/:name" title="Profile" component={<Profile />} />
                     <MyRoute exact path="*" component={<Home />} title="Home" />
                 </Switch>
             </MainBody>
             <ScrollToTop login={loginPage} href="#top" className="scrollToTop"><ExpandLessRoundedIcon /></ScrollToTop>
-            {loginPage ? ("") : (
+            {loginPage || profilePage ? ("") : (
                 <>
                     <TopBar />
                     <Footer />
                 </>
             )}
-            {
-                (Alert === "") ? ("") :
-                (
-                    <Snackbar open={Alert !== ""} autoHideDuration={6000} onClose={handleAlertClose} sx={{opacity:0.9}}>
-                        <MuiAlert elevation={6} variant="filled" onClose={handleAlertClose} severity={Alert[0]} sx={{ width: '100%'}}>
-                            {Alert[1]}
-                        </MuiAlert>
-                    </Snackbar>    
-                )
-            }
         </div>
     )
 }
 
-export default App;
+export default withRouter(App);

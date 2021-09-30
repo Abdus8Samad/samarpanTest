@@ -1,13 +1,16 @@
 import React from "react";
-import { AlertProvider } from "./Alerts";
 import { UserProvider } from "./User";
+import { PathProvider } from './Path';
+import  { SnackbarProvider } from 'notistack';
 
 const ContextsProvider = ({children}) =>{
     return(
         <UserProvider>
-            <AlertProvider>
-                {children}
-            </AlertProvider>
+            <SnackbarProvider>
+                {/* <PathProvider> */}
+                    {children}
+                {/* </PathProvider> */}
+            </SnackbarProvider>
         </UserProvider>
     )
 }

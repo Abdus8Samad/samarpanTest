@@ -9,6 +9,7 @@ const movieSchema = new Schema({
     Writer:String,
     criticScore:Number,
     averageRating:Number,
+    type:String,
     ratedBy:{
         users:[{
             type:Schema.Types.ObjectId,

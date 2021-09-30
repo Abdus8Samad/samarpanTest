@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
-import FaceIcon from '@mui/icons-material/Face';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { withRouter } from 'react-router';
 import { useSetUser } from '../Contexts/User';
+import { useSnackbar } from 'notistack';
 import axios from 'axios';
-import { useSetAlert } from '../Contexts/Alerts';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import FaceIcon from '@mui/icons-material/Face';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -103,11 +104,12 @@ const Bottom = styled.p`
 `;
 
 const Register = (props) =>{
+    const { enqueueSnackbar } = useSnackbar();
     const setUser = useSetUser();
-    const setAlert = useSetAlert();
     const [values, setValues] = useState({
         username: '',
         password: '',
+        email:'',
         submit:false,
         avatar:'',
         showPassword: false,
@@ -124,22 +126,22 @@ const Register = (props) =>{
     };
     const submit = () =>{
         setValues({...values, submit:true});
-        let { username, password, avatar } = values;
-        axios.post('/register', { username, password, avatar })
+        let { username, password, avatar, email } = values;
+        axios.post('/register', { username, password, avatar, email })
         .then(res =>{
             const { user, status } = res.data;
             if(status === 409){
-                setAlert(["warning", `Username ${user.username} Already Exists`]);
+                enqueueSnackbar(`Username ${user.username} Already Exists`, { variant : "warning" });
                 setValues({...values, submit:false});
             } else {
                 setUser(user);
-                setAlert(["success", `Welcome ${user.username}`]);
+                enqueueSnackbar(`Welcome ${user.username}`, { variant : "success" });
+                enqueueSnackbar(`Congrats You Got 10 Points For Joining Us !`, { variant : "success" });
                 props.history.goBack();
             }
         })
         .catch(err =>{
-            console.log(err);
-            setAlert(["error", `${err.response.status} Internal Server Error !`]);
+            enqueueSnackbar(`${err.response.status} Internal Server Error !`, { variant : "error" });
             setValues({...values, submit:false});
         });
     }
@@ -147,13 +149,10 @@ const Register = (props) =>{
         event.preventDefault();
     };
     const catchEnter = (event) =>{
-        if(event.which === 13){
-            document.querySelector('input[type="submit"]').click();
-        }
+        // if(event.which === 13){
+        //     document.querySelector('input[type="submit"]').click();
+        // }
     }
-    useEffect(() =>{
-
-    }, [])
     return(
         <Parent onKeyPress={catchEnter}>
             <Poster>
@@ -175,7 +174,7 @@ const Register = (props) =>{
                         id="input-with-icon-textfield"
                         onChange={handleChange('username')}
                         label="Username"
-                        sx={{"margin":"35px 0", "width":"100%"}}
+                        sx={{"margin":"20px 0", "width":"100%"}}
                         variant="standard"
                         InputProps={{
                             startAdornment: (
@@ -189,23 +188,39 @@ const Register = (props) =>{
                         }}
                     />
                     <TextField
+                        className="email"
+                        color="secondary"
+                        id="input-with-icon-textfield"
+                        label="Email"
+                        onChange={handleChange('email')}
+                        sx={{"margin":"20px 0", "width":"100%"}}
+                        variant="standard"
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <MailOutlineIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    <TextField
                         className="avatar"
                         color="secondary"
                         id="input-with-icon-textfield"
                         label="Avatar"
                         onChange={handleChange('avatar')}
-                        sx={{"margin":"35px 0", "width":"100%"}}
+                        sx={{"margin":"20px 0", "width":"100%"}}
                         variant="standard"
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <FaceIcon />
                                 </InputAdornment>
-                        ),
-                    }}
+                            ),
+                        }}
                     />
                     <FormControl
-                        sx={{"margin":"35px 0", "width":"100%"}}
+                        sx={{"margin":"20px 0", "width":"100%"}}
                         variant="standard"
                         color="secondary"
                         className="password"
@@ -226,16 +241,16 @@ const Register = (props) =>{
                                     </InputAdornment>
                                 }
                                 endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    edge="end"
-                                    >
-                                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                        >
+                                        {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
                                 }
                                 label="Password"
                             />

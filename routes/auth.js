@@ -6,11 +6,29 @@ app.get("/getUser", (req, res) =>{
     res.send(req.user);
 })
 
+app.get("/getUser/:name", (req,res) =>{
+    User.findOne({username : req.params.name})
+    .then(user =>{
+        if(user === null){
+            res.json({ status : 404 });
+        } else {
+            res.json({ status : 200, user });
+        }
+    })
+    .catch(err =>{
+        res.json({ status : 404 , err});
+        console.log(err);
+    })
+})
+
 app.post('/register', (req, res) =>{
-    const { username, password, avatar } = req.body;
+    const d = Date.now();
+    const { username, password, avatar, email } = req.body;
     const newUser = {
         username,
-        avatar
+        avatar,
+        email,
+        joinedAt : d
     }
     User.findOne({ username })
     .then(user =>{
