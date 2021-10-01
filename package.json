@@ -45,5 +45,10 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^6.1.0",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@parcel/transformer-image": "^2.0.0-rc.0",
+    "@parcel/transformer-sass": "^2.0.0-rc.0",
+    "@parcel/transformer-webmanifest": "^2.0.0-rc.0"
   }
 }

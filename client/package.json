@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "source": "public/index.html",
   "dependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
@@ -28,35 +29,16 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "parcel",
+    "build": "parcel build",
+    "test": "parcel test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
+    "@parcel/packager-raw-url": "^2.0.0-rc.0",
     "sass": "^1.41.1"
   },
   "proxy": "http://localhost:8080",
-  "description": "<h1 align=\"center\">Welcome to SAMARPAN 👋</h1> <p>   <img alt=\"Version\" src=\"https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000\" />   <a href=\"In Progress\" target=\"_blank\">     <img alt=\"Documentation\" src=\"https://img.shields.io/badge/documentation-yes-brightgreen.svg\" />   </a> </p>",
-  "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "ISC"
