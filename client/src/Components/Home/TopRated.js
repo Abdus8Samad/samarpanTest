@@ -95,6 +95,7 @@ const media = (width) => `@media only screen and (max-width:${width}px)`;
 
 const Parent = styled.div`
     position:relative;
+    top:-20px;
     width:95vw;
     margin:auto;
 `;

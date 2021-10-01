@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { withRouter } from "react-router";
+import { Redirect, withRouter } from "react-router";
 import styled from 'styled-components';
 import { useSetUser, useUser } from "../Contexts/User";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -9,7 +9,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useSnackbar } from "notistack";
 import timeSince from "../global/TimeSince";
 import ResolveLevel from "../global/ResolveLevel";
-import { Helmet } from "react-helmet";
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -176,23 +175,19 @@ const Profile = (props) =>{
     }
     useEffect(() =>{
         const { name } = props.match.params;
-        if(name === undefined){
-            setPersonal(true);
-            setProfile(myUser);
-        }
-        else if(name === "") props.history.push("/");
+        if(name === "") props.history.push("/");
         else if(name === myUser.username){
             let d = new Date(myUser.joinedAt);
             let j = timeSince(d);
-            setPersonal(true);
             setProfile({...myUser, joinedAt : j + " ago"});
+            setPersonal(true);
         } else {
             axios.get(`/getUser/${name}`)
             .then(req =>{
                 const { user, status } = req.data;
                 if(status === 404){
-                    props.history.push("/");
                     enqueueSnackbar("User Not Found!", { variant : "error" });
+                    props.history.push("/");
                 } else {
                     let d = new Date(user.joinedAt);
                     let j = timeSince(d);
@@ -208,7 +203,6 @@ const Profile = (props) =>{
     }, []);
     return(
         <Parent className="profile">
-            <Helmet><title>Profile - {profile.username}...</title></Helmet>
             <Container className="container">
                 <Details>
                     <Avatar>
