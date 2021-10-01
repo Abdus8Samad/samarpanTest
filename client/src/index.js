@@ -16,8 +16,6 @@ const MainApp = () =>{
   )
 }
 
-// ReactDOM.create
-
 
 ReactDOM.render(
 	<MainApp />

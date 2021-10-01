@@ -3,7 +3,9 @@ User = require('../models/user'),
 passport = require('passport');
 
 app.get("/getUser", (req, res) =>{
-    res.send(req.user);
+    if(req.user === undefined || req.user === null || req.user === ""){
+        res.send("");
+    } else res.send(req.user);
 })
 
 app.get("/getUser/:name", (req,res) =>{
