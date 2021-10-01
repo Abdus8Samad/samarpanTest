@@ -12,6 +12,7 @@ import luciferPoster from '../images/LuciferPoster.png';
 import luciferPotrait from '../images/LuciferPosterPotrait.png';
 import aot from '../images/AOTPoster.png';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Helmet } from "react-helmet";
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -207,8 +208,9 @@ const Home = () =>{
     const Main = () =>{
         return(
             <Parent className="Home">
+                <Helmet><title>Home - Samarpan</title></Helmet>
                 <TopMovies id="Top">
-                    <Carousel autoPlay infiniteLoop interval="8000">
+                    <Carousel autoPlay infiniteLoop interval="8000" showThumbs={false}>
                         <MovieWrapper
                             desc={"After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."}
                             title={"The Avengers Endgame"}

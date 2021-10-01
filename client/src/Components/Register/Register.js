@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
@@ -6,11 +6,12 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { withRouter } from 'react-router';
-import { useSetUser } from '../Contexts/User';
+import { useSetUser, useUser } from '../Contexts/User';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import FaceIcon from '@mui/icons-material/Face';
+import { Helmet } from 'react-helmet';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -53,8 +54,8 @@ const FormBox = styled.div`
     *:not(a){
         color:rgba(255, 255, 255, 0.8) !important;
     }
-    .username .css-1i9jpbu-MuiInputBase-root-MuiInput-root:before, .password .css-1i9jpbu-MuiInputBase-root-MuiInput-root:before{
-        border-bottom:1px solid ${props => props.status} !important;
+    div[class*='-MuiInputBase-root-MuiInput-root']{
+        border-bottom:0.8px solid rgba(255, 255, 255, 0.8) !important;
     }
     .css-1i9jpbu-MuiInputBase-root-MuiInput-root:before{
         border-bottom:1px solid rgba(255, 255, 255, 0.8) !important;
@@ -105,6 +106,7 @@ const Bottom = styled.p`
 
 const Register = (props) =>{
     const { enqueueSnackbar } = useSnackbar();
+    const User = useUser();
     const setUser = useSetUser();
     const [values, setValues] = useState({
         username: '',
@@ -112,7 +114,8 @@ const Register = (props) =>{
         email:'',
         submit:false,
         avatar:'',
-        showPassword: false,
+        showPassword:false,
+        redirect:true
     });
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
@@ -131,13 +134,13 @@ const Register = (props) =>{
         .then(res =>{
             const { user, status } = res.data;
             if(status === 409){
-                enqueueSnackbar(`Username ${user.username} Already Exists`, { variant : "warning" });
+                enqueueSnackbar(`Username ${user.username} already exists`, { variant : "warning" });
                 setValues({...values, submit:false});
             } else {
+                props.history.goBack();
                 setUser(user);
                 enqueueSnackbar(`Welcome ${user.username}`, { variant : "success" });
-                enqueueSnackbar(`Congrats You Got 10 Points For Joining Us !`, { variant : "success" });
-                props.history.goBack();
+                enqueueSnackbar(`Congrats, you got 10 points for joining us !`, { variant : "success" });
             }
         })
         .catch(err =>{
@@ -148,139 +151,143 @@ const Register = (props) =>{
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
-    const catchEnter = (event) =>{
-        // if(event.which === 13){
-        //     document.querySelector('input[type="submit"]').click();
-        // }
-    }
+    useEffect(() =>{
+        if(User !== ""){
+            props.history.goBack();
+            enqueueSnackbar("Already logged in !", { variant : "warning" });
+        } else setValues({...values, redirect: false});
+    }, [])
     return(
-        <Parent onKeyPress={catchEnter}>
-            <Poster>
-                <Img src="https://wallpaperaccess.com/full/3988284.jpg" alt="Movies" />
-            </Poster>
-            <Form onSubmit={(e) =>{
-                e.preventDefault();
-                submit();
-            }}>
-                <FormBox>
-                    <Top to='/'>
-                        Samarpan&trade;
-                    </Top>
-                    <TextField
-                        required
-                        className="username"
-                        status="red"
-                        color="secondary"
-                        id="input-with-icon-textfield"
-                        onChange={handleChange('username')}
-                        label="Username"
-                        sx={{"margin":"20px 0", "width":"100%"}}
-                        variant="standard"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <AccountCircle />
-                                </InputAdornment>
-                            ),
-                        }}
-                        inputProps={{
-                            maxlength:20
-                        }}
-                    />
-                    <TextField
-                        className="email"
-                        color="secondary"
-                        id="input-with-icon-textfield"
-                        label="Email"
-                        onChange={handleChange('email')}
-                        sx={{"margin":"20px 0", "width":"100%"}}
-                        variant="standard"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <MailOutlineIcon />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <TextField
-                        className="avatar"
-                        color="secondary"
-                        id="input-with-icon-textfield"
-                        label="Avatar"
-                        onChange={handleChange('avatar')}
-                        sx={{"margin":"20px 0", "width":"100%"}}
-                        variant="standard"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <FaceIcon />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <FormControl
-                        sx={{"margin":"20px 0", "width":"100%"}}
-                        variant="standard"
-                        color="secondary"
-                        className="password"
-                    >
-                        <InputLabel required htmlFor="adornment-password">Password</InputLabel>
-                            <Input
-                                required
-                                id="adornment-password"
-                                type={values.showPassword ? 'text' : 'password'}
-                                onChange={handleChange('password')}
-                                inputProps={{
-                                    pattern:"(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}",
-                                    title:"Password should be at least 8 chars long with at least one lowercase letter, uppercase letter, number and a special character"
-                                }}
-                                startAdornment={
+        (values.redirect) ? ("") : (
+            <Parent>
+                <Helmet><title>Signup - Samarpan</title></Helmet>
+                <Poster>
+                    <Img src="https://wallpaperaccess.com/full/3988284.jpg" alt="Movies" />
+                </Poster>
+                <Form onSubmit={(e) =>{
+                    e.preventDefault();
+                    submit();
+                }}>
+                    <FormBox>
+                        <Top to='/'>
+                            Samarpan&trade;
+                        </Top>
+                        <TextField
+                            required
+                            className="username"
+                            status="red"
+                            color="secondary"
+                            id="input-with-icon-textfield"
+                            onChange={handleChange('username')}
+                            label="Username"
+                            sx={{"margin":"20px 0", "width":"100%"}}
+                            variant="standard"
+                            InputProps={{
+                                startAdornment: (
                                     <InputAdornment position="start">
-                                        <VpnKeyIcon />
+                                        <AccountCircle />
                                     </InputAdornment>
-                                }
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        edge="end"
-                                        >
-                                        {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                label="Password"
-                            />
-                    </FormControl>
-                    <div style={{"marginTop":"20px","textAlign":"center"}}>
-                        <Button
-                            type="submit"
-                            className="login"
-                            value="SignUp"
+                                ),
+                            }}
+                            inputProps={{
+                                maxlength:20
+                            }}
                         />
-                    </div>
-                    <Bottom>
-                        Already Signed Up ? <Link to='/login'>Login</Link> instead.
-                    </Bottom>
-                </FormBox>
-            </Form>
-            <Backdrop
-                sx={{
-                    color:"#fff",
-                    position:"fixed",
-                    top:0,
-                    left:0,
-                    width:"100vw",
-                    height:"100vh"
-                }}
-                open={values.submit}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
-        </Parent>
+                        <TextField
+                            className="email"
+                            color="secondary"
+                            id="input-with-icon-textfield"
+                            label="Email"
+                            onChange={handleChange('email')}
+                            sx={{"margin":"20px 0", "width":"100%"}}
+                            variant="standard"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <MailOutlineIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <TextField
+                            className="avatar"
+                            color="secondary"
+                            id="input-with-icon-textfield"
+                            label="Avatar"
+                            onChange={handleChange('avatar')}
+                            sx={{"margin":"20px 0", "width":"100%"}}
+                            variant="standard"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <FaceIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <FormControl
+                            sx={{"margin":"20px 0", "width":"100%"}}
+                            variant="standard"
+                            color="secondary"
+                            className="password"
+                        >
+                            <InputLabel required htmlFor="adornment-password">Password</InputLabel>
+                                <Input
+                                    required
+                                    id="adornment-password"
+                                    type={values.showPassword ? 'text' : 'password'}
+                                    onChange={handleChange('password')}
+                                    inputProps={{
+                                        pattern:"(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}",
+                                        title:"Password should be at least 8 chars long with at least one lowercase letter, uppercase letter, number and a special character"
+                                    }}
+                                    startAdornment={
+                                        <InputAdornment position="start">
+                                            <VpnKeyIcon />
+                                        </InputAdornment>
+                                    }
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            edge="end"
+                                            >
+                                            {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    label="Password"
+                                />
+                        </FormControl>
+                        <div style={{"marginTop":"20px","textAlign":"center"}}>
+                            <Button
+                                type="submit"
+                                className="login"
+                                value="SignUp"
+                            />
+                        </div>
+                        <Bottom>
+                            Already Signed Up ? <Link to='/login'>Login</Link> instead.
+                        </Bottom>
+                    </FormBox>
+                </Form>
+                <Backdrop
+                    sx={{
+                        color:"#fff",
+                        position:"fixed",
+                        top:0,
+                        left:0,
+                        width:"100vw",
+                        height:"100vh"
+                    }}
+                    open={values.submit}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            </Parent>
+        )
     )
 }
 

@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Redirect, Route, Switch, withRouter } from "react-router";
-import { Helmet } from 'react-helmet';
-import axios from "axios";
+import React, { useEffect } from "react";
+import { Switch, withRouter } from "react-router";
 import styled from 'styled-components';
 import Home from "./Home/Home";
 import Login from "./Login/Login";
 import Register from "./Register/Register";
 import Profile from "./Profile/Profile";
+import EditProfile from './Profile/EditProfile';
 import TopBar from './TopBar';
 import Footer from './Footer';
-import { useSetUser, useUser } from "./Contexts/User";
+import MyRoute from "./global/MyRoute";
+import { useSetUser } from "./Contexts/User";
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import { useSnackbar } from "notistack";
-import { usePath, useSetPath } from "./Contexts/Path";
-
-const media = (width) => `@media only screen and (max-width:${width}px)`;
+import LoadData from "./global/LoadData";
+import { useSetLoadingState } from "./Contexts/LoadingState";
 
 const MainBody = styled.div`
     position:relative;
@@ -42,13 +41,8 @@ const ScrollToTop = styled.a`
 
 const App = (props) => {
     const { enqueueSnackbar } = useSnackbar();
-    const [loginPage, setLoginPage] = useState(false);
-    const [topTitle, setTopTitle] = useState("Home");
-    const [profilePage, setprofilePage] = useState(false);
-    const User = useUser();
     const setUser = useSetUser();
-    const path = usePath();
-    const setPath = useSetPath();
+    const setLoading = useSetLoadingState();
     const getElemDistance = ( elem ) => {
         var location = 0;
         if (elem.offsetParent) {
@@ -84,55 +78,24 @@ const App = (props) => {
         }
     }
     useEffect(() =>{
-        axios.get('/getUser')
-        .then(res =>{
-            setUser(res.data);
-        })
-        .catch(err =>{
-            console.log(err);
-            enqueueSnackbar(err.response.status + " Internal Server Error !", { variant : "error" });
-        })
+        LoadData(setUser, setLoading, enqueueSnackbar);
         scrollingEffect();
         window.addEventListener('scroll',scrollingEffect);
     }, []);
-    const MyRoute = (attr) =>{
-        return(
-            <Route {...attr}>
-                {() =>{
-                        if(attr.path.substr(0, 8) === "/profile"){
-                            setprofilePage(true);
-                        } else {
-                            setprofilePage(false);
-                            if(attr.path === "/login" || attr.path === "/register"){
-                                if(User !== ""){
-                                    setTopTitle('Home');
-                                    setLoginPage(false);
-                                    props.history.push("/");
-                                } else setLoginPage(true);
-                            }
-                            else setLoginPage(false);
-                        }
-                        // path.push(attr.path);
-                        setTopTitle(attr.title);
-                        return attr.component;
-                    }
-                }
-            </Route>
-        )
-    }
     return(
         <div className="App">
-            <Helmet><title>{topTitle}</title></Helmet>
             <MainBody>
                 <Switch>
-                    <MyRoute exact path="/login" title="Login" component={<Login />} />
-                    <MyRoute exact path="/register" title="SignUp" component={<Register />} />
-                    <MyRoute exact path="/profile/:name" title="Profile" component={<Profile />} />
-                    <MyRoute exact path="*" component={<Home />} title="Home" />
+                    <MyRoute path="/login" component={<Login />} name="login" />
+                    <MyRoute path="/register" component={<Register />} name="register" />
+                    <MyRoute path="/profile/:name" component={<Profile />} name="profile" />
+                    <MyRoute path="/profile/edit" component={<EditProfile />} name="editprofile" />
+                    <MyRoute path="/profile" component={<Profile />} name="myprofile" />
+                    <MyRoute path="*" component={<Home />} />
                 </Switch>
             </MainBody>
-            <ScrollToTop login={loginPage} href="#top" className="scrollToTop"><ExpandLessRoundedIcon /></ScrollToTop>
-            {loginPage || profilePage ? ("") : (
+            <ScrollToTop login={props.location.pathname !== "/"} href="#top" className="scrollToTop"><ExpandLessRoundedIcon /></ScrollToTop>
+            {props.location.pathname !== "/" ? ("") : (
                 <>
                     <TopBar />
                     <Footer />

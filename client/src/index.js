@@ -6,12 +6,21 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from 'react-router-dom';
 import ContextsProvider from './Components/Contexts';
 
+const MainApp = () =>{
+  return(
+	<ContextsProvider>
+		<Router>
+			<App />
+		</Router>
+	</ContextsProvider>
+  )
+}
+
+// ReactDOM.create
+
+
 ReactDOM.render(
-  <ContextsProvider>
-    <Router>
-      <App />
-    </Router>
-  </ContextsProvider>
+	<MainApp />
 ,
   document.getElementById('root')
 );
