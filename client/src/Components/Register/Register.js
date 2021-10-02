@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { withRouter } from 'react-router';
-import { useSetUser } from '../Contexts/User';
+import { Redirect, withRouter } from 'react-router';
+import { useSetUser, useUser } from '../Contexts/User';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import FaceIcon from '@mui/icons-material/Face';
+import { useLoading } from '../Contexts/LoadingState';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -103,7 +104,35 @@ const Bottom = styled.p`
     }
 `;
 
-const Register = (props) =>{
+const Waiting = ({open}) =>{
+    return(
+        <Backdrop
+            sx={{
+                color:"#fff",
+                position:"fixed",
+                top:0,
+                left:0,
+                width:"100vw",
+                height:"100vh"
+            }}
+            open={open}
+        >
+        <CircularProgress color="inherit" />
+        </Backdrop>
+    )
+}
+
+const LoggedIn = () =>{
+    const { enqueueSnackbar } = useSnackbar();
+    useEffect(() =>{
+        enqueueSnackbar("Already Logged In !", { variant : "warning" });
+    })
+    return(
+        <Redirect to='/' />
+    )
+}
+
+const Main = ({props}) =>{
     const { enqueueSnackbar } = useSnackbar();
     const setUser = useSetUser();
     const [values, setValues] = useState({
@@ -127,7 +156,7 @@ const Register = (props) =>{
     const submit = () =>{
         setValues({...values, submit:true});
         let { username, password, avatar, email } = values;
-        axios.post('/register', { username, password, avatar, email })
+        axios.post('/auth/register', { username, password, avatar, email })
         .then(res =>{
             const { user, status } = res.data;
             if(status === 409){
@@ -137,7 +166,7 @@ const Register = (props) =>{
                 setUser(user);
                 enqueueSnackbar(`Welcome ${user.username}`, { variant : "success" });
                 enqueueSnackbar(`Congrats You Got 10 Points For Joining Us !`, { variant : "success" });
-                props.history.goBack();
+                props.history.push("/");
             }
         })
         .catch(err =>{
@@ -148,13 +177,8 @@ const Register = (props) =>{
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
-    const catchEnter = (event) =>{
-        // if(event.which === 13){
-        //     document.querySelector('input[type="submit"]').click();
-        // }
-    }
     return(
-        <Parent onKeyPress={catchEnter}>
+        <Parent>
             <Poster>
                 <Img src="https://wallpaperaccess.com/full/3988284.jpg" alt="Movies" />
             </Poster>
@@ -281,6 +305,16 @@ const Register = (props) =>{
                 <CircularProgress color="inherit" />
             </Backdrop>
         </Parent>
+    )
+}
+
+const Register = (props) =>{
+    const User = useUser();
+    const Loading = useLoading();
+    return(
+        (!Loading.user) ? (<Waiting open={true} />) : (
+            (User !== "") ? (<LoggedIn />) : (<Main props={props} />)
+        )
     )
 }
 

@@ -73,6 +73,9 @@ const Links = styled(Link)`
     &.user:hover img{
         top:-2px;
     }
+    ${media(350)}{
+        font-size:80% !important;
+    }
 `;
 
 const UserImg = styled.img`

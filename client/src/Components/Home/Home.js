@@ -210,7 +210,7 @@ const Home = () =>{
                 <TopMovies id="Top">
                     <Carousel autoPlay infiniteLoop interval="8000">
                         <MovieWrapper
-                            desc={"After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."}
+                            desc={"After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."}
                             title={"The Avengers Endgame"}
                             src={avengers}
                             score={"86"}
@@ -218,7 +218,7 @@ const Home = () =>{
                             ratedBy={"970k"}
                         />
                         <MovieWrapper
-                            desc={"In a small town where everyone knows everyone, a peculiar incident starts a chain of events that leads to the disappearance of a child, which begins to tear at the fabric of an otherwise peaceful community. Dark government agencies and seemingly malevolent supernatural forces converge on the town."}
+                            desc={"In a small town where everyone knows everyone, a peculiar incident starts a chain of events that leads to the disappearance of a child, which begins to tear at the fabric of an otherwise peaceful community."}
                             title={"Stranger Things"}
                             src={strangerThings}
                             score={"93"}

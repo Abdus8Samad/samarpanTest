@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
-import { useSetUser } from '../Contexts/User';
-import { withRouter } from 'react-router';
+import { useSetUser, useUser } from '../Contexts/User';
+import { Redirect, withRouter } from 'react-router';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useLoading } from '../Contexts/LoadingState';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -98,7 +99,25 @@ const Bottom = styled.p`
     }
 `;
 
-const Login = (props) =>{
+const Waiting = ({open}) =>{
+    return(
+        <Backdrop
+            sx={{
+                color:"#fff",
+                position:"fixed",
+                top:0,
+                left:0,
+                width:"100vw",
+                height:"100vh"
+            }}
+            open={open}
+        >
+        <CircularProgress color="inherit" />
+        </Backdrop>
+    )
+}
+
+const Main = ({props}) =>{
     const { enqueueSnackbar } = useSnackbar();
     const [values, setValues] = useState({
         username: '',
@@ -122,10 +141,9 @@ const Login = (props) =>{
         event.preventDefault();
     };
     const submit = () =>{
-        console.log("Submit");
         setValues({...values, submit:true});
         let { username, password } = values;
-        axios.post('/login', { username, password })
+        axios.post('/auth/login', { username, password })
         .then(res =>{
             const { user } = res.data;
             setUser(user);
@@ -141,13 +159,8 @@ const Login = (props) =>{
             setValues({...values, submit:false});
         });
     }
-    const catchEnter = (event) =>{
-        // if(event.which === 13){
-        //     document.querySelector('input[type="submit"]').click();
-        // }
-    }
     return(
-        <Parent onKeyPress={catchEnter}>
+        <Parent>
             <Poster>
                 <Img src="https://wallpaperaccess.com/full/3988284.jpg" alt="Movies" />
             </Poster>
@@ -218,20 +231,28 @@ const Login = (props) =>{
                     </Bottom>
                 </FormBox>
             </Form>
-            <Backdrop
-                sx={{
-                    color:"#fff",
-                    position:"fixed",
-                    top:0,
-                    left:0,
-                    width:"100vw",
-                    height:"100vh"
-                }}
-                open={values.submit}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Waiting open={values.submit} />
         </Parent>
+    )
+}
+
+const LoggedIn = () =>{
+    const { enqueueSnackbar } = useSnackbar();
+    useEffect(() =>{
+        enqueueSnackbar("Already Logged In !", { variant : "warning" });
+    })
+    return(
+        <Redirect to='/' />
+    )
+}
+
+const Login = (props) =>{
+    const User = useUser();
+    const Loading = useLoading();
+    return(
+        (!Loading.user) ? (<Waiting open={true} />) : (
+            (User !== "") ? (<LoggedIn />) : (<Main props={props}/>)
+        )
     )
 }
 

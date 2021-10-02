@@ -1,15 +1,15 @@
 import React from "react";
 import { UserProvider } from "./User";
-import { PathProvider } from './Path';
 import  { SnackbarProvider } from 'notistack';
+import { LoadingProvider } from "./LoadingState";
 
 const ContextsProvider = ({children}) =>{
     return(
         <UserProvider>
             <SnackbarProvider>
-                {/* <PathProvider> */}
+                <LoadingProvider>
                     {children}
-                {/* </PathProvider> */}
+                </LoadingProvider>
             </SnackbarProvider>
         </UserProvider>
     )

@@ -32,10 +32,20 @@ const Top = styled.p`
     padding-left:25px;
     font-size:40px;
     letter-spacing:6px;
+    position:relative;
+    span{
+        display:block;
+        margin-top:10px;
+        font-size:small;
+        vertical-align:bottom;
+    }
     ${media(600)}{
         font-size:30px;
         text-align:center;
         padding:0;
+        span{
+            text-align:center;
+        }
     }
 `;
 
@@ -89,6 +99,7 @@ const FooterTemplate = (props) =>{
         <Parent style={props.style}>
             <Top>
                 Samarpan&trade;
+                <span>Starlight and moonlight review platform for newbies</span>
             </Top>
             <Hr />
             <Links to='/Categories'>Categories</Links>

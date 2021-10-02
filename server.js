@@ -40,13 +40,12 @@ app.get('/', (req, res) => {
 })
 
 //Routes
-// import blogRoutes from './routes/blogs';
-const authRoutes = require('./routes/auth');
-// import indexRoutes from './routes/index';
+const authRoutes = require('./routes/auth'),
+profileRoutes = require("./routes/profile");
 
-// app.use('/blogs', blogRoutes);
-app.use('/', authRoutes);
-// app.use('/', indexRoutes);
+// Using the routes
+app.use('/auth', authRoutes);
+app.use('/profile', profileRoutes);
 
 app.listen(PORT, () => {
     console.log(`Listening at port ${PORT}`);

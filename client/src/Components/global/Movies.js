@@ -31,9 +31,12 @@ const Info = styled.div`
 
 const Chip = styled.div`
     padding:5px;
-    font-size:80%;
+    font-size:65%;
     border-radius:8px;
     background:${props => props.background};
+    ${media(450)}{
+        font-size:50%;
+    }
 `;
 
 const Paper = styled(Link)`
