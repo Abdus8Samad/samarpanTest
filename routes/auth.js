@@ -1,4 +1,6 @@
+
 const app = require('express').Router(),
+upload = require('../utils/upload'),
 User = require('../models/user'),
 passport = require('passport');
 
@@ -10,7 +12,7 @@ app.get("/getUser/:name", (req,res) =>{
     User.findOne({username : req.params.name})
     .then(user =>{
         if(user === null){
-            res.json({ status : 404 });
+            res.json({ status : 404, user: null });
         } else {
             res.json({ status : 200, user });
         }
@@ -23,12 +25,12 @@ app.get("/getUser/:name", (req,res) =>{
 
 app.post('/register', (req, res) =>{
     const d = Date.now();
-    const { username, password, avatar, email } = req.body;
+    const { username, password, email, avatar } = req.body;
     const newUser = {
         username,
-        avatar,
         email,
-        joinedAt : d
+        joinedAt : d,
+        avatar
     }
     User.findOne({ username })
     .then(user =>{
@@ -37,7 +39,6 @@ app.post('/register', (req, res) =>{
         } else {
             User.register(newUser, password)
             .then(user =>{
-                console.log(user);
                 passport.authenticate('local')(req, res, () =>{
                     res.json({ status: 200, msg: "", user });
                 })

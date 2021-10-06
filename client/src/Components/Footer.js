@@ -10,7 +10,6 @@ const Parent = styled.div`
     color:white;
     width:100%;
     background:#262626;
-    border-top:5px solid #1c1c1c;
     padding-bottom:5px;
 `;
 
@@ -35,6 +34,7 @@ const Top = styled.p`
     position:relative;
     span{
         display:block;
+        max-width:65vw;
         margin-top:10px;
         font-size:small;
         vertical-align:bottom;
@@ -44,13 +44,13 @@ const Top = styled.p`
         text-align:center;
         padding:0;
         span{
-            text-align:center;
+            margin:10px auto;
         }
     }
 `;
 
 const FollowUs = styled.div`
-    margin:50px auto 0 auto;
+    margin:35px auto 0 auto;
     text-align:center;
     display:flex;
     justify-content:center;
@@ -99,7 +99,7 @@ const FooterTemplate = (props) =>{
         <Parent style={props.style}>
             <Top>
                 Samarpan&trade;
-                <span>Starlight and moonlight review platform for newbies</span>
+                <span className="desc">Starlight and moonlight review platform for newbies</span>
             </Top>
             <Hr />
             <Links to='/Categories'>Categories</Links>

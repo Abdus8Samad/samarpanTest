@@ -20,8 +20,15 @@ connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true
     })
 
 app.use(cors());
-app.use(express.json());
 app.use(morgan('dev'));
+app.use(express.json({
+    limit: '50mb'
+}));
+app.use(express.urlencoded({
+    limit: '50mb',
+    parameterLimit: 100000,
+    extended: true 
+}));
 app.use(expressSession({
     secret: 'My secret',
     resave: false,
@@ -34,7 +41,6 @@ app.use(expressSession({
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.get('/', (req, res) => {
     res.send('this is the server');
 })

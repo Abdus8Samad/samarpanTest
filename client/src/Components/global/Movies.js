@@ -33,7 +33,7 @@ const Chip = styled.div`
     padding:5px;
     font-size:65%;
     border-radius:8px;
-    background:${props => props.background};
+    border:1px solid ${props => props.background};
     ${media(450)}{
         font-size:50%;
     }

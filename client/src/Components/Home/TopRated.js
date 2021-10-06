@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Movies } from '../global/Movies';
 import dummyData from '../global/dummyData';
+import { SmallHeading } from '../global/styles';
 
 const Data = [
     {
@@ -91,31 +92,10 @@ const Data = [
 ]
 
 
-const media = (width) => `@media only screen and (max-width:${width}px)`;
-
 const Parent = styled.div`
     position:relative;
-    top:-20px;
     width:95vw;
     margin:auto;
-`;
-
-const Title = styled.p`
-    font-size:30px;
-    ${media(600)}{
-        font-size:25px;
-    }
-`;
-
-const Hr = styled.hr`
-    position:relative;
-    top:-15px;
-    width:85vw;
-    float:left;
-    border:1px solid white;
-    ${media(600)}{
-        width:60vw;
-    }
 `;
 
 const TopRated = () =>{
@@ -125,8 +105,7 @@ const TopRated = () =>{
     }, [])
     return(
         <Parent>
-            <Title>Top Rated</Title>
-            <Hr />
+            <SmallHeading text="Top Rated" /><br /><br />
             <Movies payload={movies} />
         </Parent>
     )

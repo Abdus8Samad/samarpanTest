@@ -52,7 +52,7 @@ const FormBox = styled.div`
     *:not(a){
         color:rgba(255, 255, 255, 0.8) !important;
     }
-    .css-1i9jpbu-MuiInputBase-root-MuiInput-root:before{
+    .MuiInput-root.MuiInput-underline{
         border-bottom:1px solid rgba(255, 255, 255, 0.8) !important;
     }
     ${media(720)}{
@@ -223,7 +223,7 @@ const Main = ({props}) =>{
                         <Button
                             type="submit"
                             className="login"
-                            value="Login"
+                            value="Log In"
                         />
                     </div>
                     <Bottom>

@@ -43,12 +43,13 @@ const App = (props) => {
     const [loginPage, setLoginPage] = useState(false);
     const [topTitle, setTopTitle] = useState("Home");
     const [profilePage, setprofilePage] = useState(false);
+    const [scrollEffectDone, setScrollEffect] = useState(false);
     const User = useUser();
     const setUser = useSetUser();
     const Loading = useLoading();
     const setLoading = useSetLoading();
     const getElemDistance = ( elem ) => {
-        var location = 0;
+        let location = 0;
         if (elem.offsetParent) {
             do {
                 location += elem.offsetTop;
@@ -58,13 +59,13 @@ const App = (props) => {
         return location >= 0 ? location : 0;
     };
     const visible = function(elem) {
-        var diff = 450;
-        var top = getElemDistance(elem);
+        let diff = 450;
+        let top = getElemDistance(elem);
         return (top <= window.scrollY + (diff));
     };
     const scrollingEffect = () =>{
-        var scrollToTop = document.querySelector('a.scrollToTop');
-        if(window.scrollY <= 40){
+        let scrollToTop = document.querySelector('a.scrollToTop');
+        if(window.scrollY <= 300){
             scrollToTop.style.opacity = 0;
             scrollToTop.style.visibility = "hidden";
         }
@@ -72,16 +73,25 @@ const App = (props) => {
             scrollToTop.style.opacity = 0.75;
             scrollToTop.style.visibility = "visible";
         }
-        var scrollEffect = document.querySelectorAll('.scrollEffect');
-        for(var x = 0;x < scrollEffect.length;x++){
-            if(visible(scrollEffect[x])){
-                if(!scrollEffect[x].classList.contains('alreadyVisible')){
-                    scrollEffect[x].classList.add('come-in','alreadyVisible');
+        if(!scrollEffectDone){
+            let scrollEffect = document.querySelectorAll('.scrollEffect');
+            let cnt = 0;
+            for(let x = 0;x < scrollEffect.length;x++){
+                if(visible(scrollEffect[x])){
+                    if(!scrollEffect[x].classList.contains('alreadyVisible')){
+                        scrollEffect[x].classList.add('come-in','alreadyVisible');
+                        cnt++;
+                    }
                 }
+            }
+            if(cnt === 0){
+                console.log(scrollEffectDone + " " + cnt);
+                setScrollEffect(true);
             }
         }
     }
     useEffect(() =>{
+        scrollingEffect();
         axios.get('/auth/getUser')
         .then(res =>{
             setUser(res.data);
@@ -92,8 +102,8 @@ const App = (props) => {
             setLoading({...Loading, user : true});
             enqueueSnackbar(err.response.status + " Internal Server Error !", { variant : "error" });
         })
-        scrollingEffect();
         window.addEventListener('scroll',scrollingEffect);
+        window.addEventListener('resize',scrollingEffect);
     }, []);
     const MyRoute = (attr) =>{
         return(
@@ -121,8 +131,8 @@ const App = (props) => {
                 <Switch>
                     <MyRoute exact path="/login" title="Login" component={<Login />} />
                     <MyRoute exact path="/register" title="SignUp" component={<Register />} />
-                    <MyRoute exact path="/profile" title="Profile" component={<Profile />} />
                     <MyRoute exact path="/profile/:name" title="Profile" component={<Profile />} />
+                    <MyRoute exact path="/profile" title="Profile" component={<Profile />} />
                     <MyRoute exact path="*" component={<Home />} title="Home" />
                 </Switch>
             </MainBody>

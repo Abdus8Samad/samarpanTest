@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router";
 import styled from 'styled-components';
 import { useSetUser, useUser } from "../Contexts/User";
-import EditIcon from '@mui/icons-material/Edit';
 import { useSnackbar } from "notistack";
 import timeSince from "../utils/TimeSince";
 import ResolveLevel from "../utils/ResolveLevel";
@@ -14,6 +13,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useLoading } from "../Contexts/LoadingState";
 import { Link } from "react-router-dom";
+import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -21,7 +21,7 @@ const Parent = styled.div`
     color:rgba(255, 255, 255, 0.85);
 `;
 
-const Back = styled.div`
+export const Back = styled.div`
     position:fixed;
     top:0;
     left:0;
@@ -33,18 +33,47 @@ const Back = styled.div`
 `;
 
 const Avatar = styled.div`
-    text-align:center;
-    min-height:25vw;
     position:relative;
-    padding:20px 0;
-    img{
-        width:24vw;
-        min-width:120px;
+    width:fit-content;
+    height:fit-content;
+    margin:20px auto;
+    &::after{
+        content:'';
+        width:102.2%;
+        height:100%;
+        position:absolute;
+        z-index:50;
+        left:0;
+        top:0;
         border-radius:50%;
+        background:rgba(0, 0, 0, 0.4);
+        opacity:0;
+        transition:all 0.2s ease;
+    }
+    &:hover{
+        cursor:${props => props.personal ? "pointer" : "initial"};
+        &::after, svg{
+            opacity:${props => props.personal ? 1 : 0};
+        }
+    }
+    svg{
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        z-index:100;
+        opacity:0;
     }
     ${media(600)}{
         min-height:0;
     }
+`;
+
+const Img = styled.img`
+    width:23vw;
+    position:relative;
+    min-width:120px;
+    border-radius:50%;
 `;
 
 const Container = styled.div`
@@ -144,7 +173,7 @@ const Buttons = styled.div`
     }
 `;
 
-const Button = styled.div`
+export const Button = styled.div`
     margin:10px;
     padding:10px;
     font-size:15px;
@@ -169,7 +198,7 @@ const Button = styled.div`
     }
 `;
 
-const Top = styled.div`
+export const Top = styled.div`
     position:fixed;
     top:0;
     left:0;
@@ -206,7 +235,7 @@ const Top = styled.div`
     }
 `;
 
-const Waiting = ({open}) =>{
+const Waiting = () =>{
     return(
         <Backdrop
             sx={{
@@ -217,7 +246,7 @@ const Waiting = ({open}) =>{
                 width:"100vw",
                 height:"100vh"
             }}
-            open={open}
+            open={true}
         >
         <CircularProgress color="inherit" />
         </Backdrop>
@@ -303,8 +332,10 @@ const Main = ({props}) =>{
             axios.post('/profile/addfriend', {
                 username : profile.username
             }).then(res =>{
+                const { user } = res.data;
                 enqueueSnackbar(`${profile.username} added as friend`, { variant : "success" });
                 setProfile({...profile, isFriend : true});
+                setUser(user);
                 setFriendState({...friendState, addingFriend : false});
             }).catch(err =>{
                 console.log(err);
@@ -319,8 +350,10 @@ const Main = ({props}) =>{
             axios.post('/profile/removefriend', {
                 username : profile.username
             }).then(res =>{
+                const { user } = res.data;
                 enqueueSnackbar(`${profile.username} removed as friend`, { variant : "success" });
                 setProfile({...profile, isFriend : false});
+                setUser(user);
                 setFriendState({...friendState, removingFriend : false});
             }).catch(err =>{
                 console.log(err);
@@ -329,14 +362,62 @@ const Main = ({props}) =>{
             })
         }
     }
+    const setFile = ({target}) =>{
+        const validTypes = ["jpeg", "png", "jpg", "gif", "jfif", "pjpeg", "pjp"];
+        const file = target.files[0], fileType = file.type, fileSize = file.size, reader = new FileReader();
+        const tenMB = 10485760; // bytes;
+        if(validTypes.indexOf(fileType.substr(6)) === -1){
+            target.value = "";
+            enqueueSnackbar("Please upload only valid images", { variant : "warning" });
+        } else if(fileSize > tenMB) {
+            target.value = "";
+            enqueueSnackbar("Avatar size limit of 10MB exceeded", { variant : "warning" });
+        } else {
+            reader.addEventListener('load', () =>{
+                axios.post(`/profile/${profile.username}/edit`, { avatar: reader.result })
+                .then(res =>{
+                    const { status } = res.data;
+                    if(status !== 200){
+                        console.log(res.data.msg);
+                    } else {
+                        setProfile({...profile, avatar: reader.result});
+                        setUser(profile);
+                        enqueueSnackbar("Updated Avatar Successfully !", { variant : "success" });
+                    }
+                })
+            }, false);
+            if(file){
+                // Will trigger load when loaded with result -> file's data in base64 encoding
+                reader.readAsDataURL(file);
+            }    
+        }
+    }
+    const uploadAvatar = () =>{
+        if(personal){
+            const input = document.querySelector("input[type='file']");
+            input.click();
+        }
+    }
     return(
         <Parent className="profile">
             <Back />
             <Container className="container">
                 <Details>
-                    <Avatar>
-                        <img src={profile.avatar} alt="User" />
-                    </Avatar>
+                    <div>
+                        <Avatar personal={personal} onClick={() => uploadAvatar()}>
+                            <CameraAltOutlinedIcon />
+                            <Img src={profile.avatar} alt="User" />
+                            <input
+                                id="upload-photo"
+                                name="avatar"
+                                type="file"
+                                onChange={(e) => setFile(e)}
+                                accept="image/jpeg, image/jpg, image/gif, image/png"
+                                title="Please upload only images"
+                                hidden
+                            />
+                        </Avatar>
+                    </div>
                     <About>
                         <p className="name">{profile.username}<span className="lev">({ResolveLevel(profile.score)[0]})</span></p>
                         <p>Joined : {profile.joinedAt}</p>
@@ -401,11 +482,6 @@ const Main = ({props}) =>{
                             <Tooltip title="logout">
                                 <Button onClick={() => logout()} className="logout" >
                                     <ExitToAppIcon />
-                                </Button>
-                            </Tooltip>
-                            <Tooltip title="Edit Profile">
-                                <Button>
-                                    <EditIcon />
                                 </Button>
                             </Tooltip>
                         </Buttons>

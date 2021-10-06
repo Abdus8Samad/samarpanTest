@@ -20,7 +20,7 @@ app.post('/addfriend', (req, res) =>{
                 })
                 user.friends.push(friend._id);
                 await user.save();
-                res.json({ status : 200, msg : "Friend added" });
+                res.json({ status : 200, msg : "Friend added", user });
             })
             .catch(err =>{
                 console.log(err);
@@ -57,7 +57,7 @@ app.post('/removefriend', (req, res) =>{
                 }
                 user.friends.pull(friend._id);
                 await user.save();
-                res.json({ status : 200, msg : "Friend removed" });
+                res.json({ status : 200, msg : "Friend removed", user });
             })
             .catch(err =>{
                 console.log(err);
@@ -69,6 +69,28 @@ app.post('/removefriend', (req, res) =>{
             res.json({ status : 404, err});
         })
     }
+})
+
+app.post("/:name/edit", (req, res) =>{
+    User.findOne({username: req.params.name})
+    .then(user =>{
+        if(user){
+            user.avatar = req.body.avatar;
+            user.save()
+            .then(x => res.json({ status: 200, msg: "Profile Updated !" }))
+            .catch(err =>{
+                console.log(err);
+                res.json({ status: 500, err });
+            });
+        } else {
+            console.log("User not found !");
+            res.json({ status: 404, msg: "User not found !" });
+        }
+    })
+    .catch(err =>{
+        console.log(err);
+        res.json({ status: 500, err });
+    })
 })
 
 module.exports = app;

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
+import { Backdrop, Button, CircularProgress, Fab, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { AddCircleOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Redirect, withRouter } from 'react-router';
 import { useSetUser, useUser } from '../Contexts/User';
 import { useSnackbar } from 'notistack';
@@ -54,18 +54,21 @@ const FormBox = styled.div`
     *:not(a){
         color:rgba(255, 255, 255, 0.8) !important;
     }
-    .username .css-1i9jpbu-MuiInputBase-root-MuiInput-root:before, .password .css-1i9jpbu-MuiInputBase-root-MuiInput-root:before{
-        border-bottom:1px solid ${props => props.status} !important;
-    }
-    .css-1i9jpbu-MuiInputBase-root-MuiInput-root:before{
+    .MuiInput-root.MuiInput-underline{
         border-bottom:1px solid rgba(255, 255, 255, 0.8) !important;
+    }
+    span.filename{
+        display:inline-block;
+        max-width:30vw;
+        overflow:hidden;
+        text-overflow:ellipsis;
     }
     ${media(720)}{
         width:70vw;
     }
 `;
 
-const Button = styled.input`
+const MyButton = styled.input`
     padding:10px;
     text-align:center;
     font-size:2vw;
@@ -140,9 +143,10 @@ const Main = ({props}) =>{
         password: '',
         email:'',
         submit:false,
-        avatar:'',
         showPassword: false,
+        fileName: ""
     });
+    const [avatar, setAvatar] = useState("");
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
     };
@@ -153,16 +157,37 @@ const Main = ({props}) =>{
             showPassword: !values.showPassword,
         });
     };
+    const setFile = ({target}) =>{
+        const validTypes = ["jpeg", "png", "jpg", "gif", "jfif", "pjpeg", "pjp"];
+        const file = target.files[0], fileType = file.type, fileSize = file.size, reader = new FileReader();
+        reader.addEventListener('load', () => setAvatar(reader.result), false);
+        if(file){
+            // Will trigger load when loaded with result -> file's data in base64 encoding
+            reader.readAsDataURL(file);
+        }
+        const tenMB = 10485760; // bytes;
+        if(validTypes.indexOf(fileType.substr(6)) === -1){
+            target.value = "";
+            enqueueSnackbar("Please upload only valid images", { variant : "warning" });
+        } else if(fileSize > tenMB) {
+            target.value = "";
+            enqueueSnackbar("Avatar size limit of 10MB exceeded", { variant : "warning" });
+        } else {
+            let fileName = target.value.split("\\").slice(-1)[0];
+            setValues({...values, fileName});
+        }
+    }
     const submit = () =>{
-        setValues({...values, submit:true});
-        let { username, password, avatar, email } = values;
-        axios.post('/auth/register', { username, password, avatar, email })
+        setValues({...values, submit: true});
+        let { username, password, email } = values;
+        axios.post('/auth/register', { username, password, email, avatar })
         .then(res =>{
             const { user, status } = res.data;
             if(status === 409){
                 enqueueSnackbar(`Username ${user.username} Already Exists`, { variant : "warning" });
-                setValues({...values, submit:false});
+                setValues({...values, submit: false});
             } else {
+                if(status === "okwitherror") enqueueSnackbar("There was some error with the image", { variant : "warning" });
                 setUser(user);
                 enqueueSnackbar(`Welcome ${user.username}`, { variant : "success" });
                 enqueueSnackbar(`Congrats You Got 10 Points For Joining Us !`, { variant : "success" });
@@ -171,7 +196,7 @@ const Main = ({props}) =>{
         })
         .catch(err =>{
             enqueueSnackbar(`${err.response.status} Internal Server Error !`, { variant : "error" });
-            setValues({...values, submit:false});
+            setValues({...values, submit: false});
         });
     }
     const handleMouseDownPassword = (event) => {
@@ -185,7 +210,7 @@ const Main = ({props}) =>{
             <Form onSubmit={(e) =>{
                 e.preventDefault();
                 submit();
-            }}>
+            }} encType="multipart/form-data" action="/auth/register" method="POST">
                 <FormBox>
                     <Top to='/'>
                         Samarpan&trade;
@@ -217,7 +242,7 @@ const Main = ({props}) =>{
                         id="input-with-icon-textfield"
                         label="Email"
                         onChange={handleChange('email')}
-                        sx={{"margin":"20px 0", "width":"100%"}}
+                        sx={{"margin":"30px 0", "width":"100%"}}
                         variant="standard"
                         InputProps={{
                             startAdornment: (
@@ -227,24 +252,8 @@ const Main = ({props}) =>{
                             ),
                         }}
                     />
-                    <TextField
-                        className="avatar"
-                        color="secondary"
-                        id="input-with-icon-textfield"
-                        label="Avatar"
-                        onChange={handleChange('avatar')}
-                        sx={{"margin":"20px 0", "width":"100%"}}
-                        variant="standard"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <FaceIcon />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
                     <FormControl
-                        sx={{"margin":"20px 0", "width":"100%"}}
+                        sx={{"margin":"30px 0", "width":"100%"}}
                         variant="standard"
                         color="secondary"
                         className="password"
@@ -279,11 +288,25 @@ const Main = ({props}) =>{
                                 label="Password"
                             />
                     </FormControl>
-                    <div style={{"marginTop":"20px","textAlign":"center"}}>
-                        <Button
+                    <label htmlFor="upload-photo" style={{"color":"rgba(255, 255, 255, 0.85)"}}>
+                        <input
+                            id="upload-photo"
+                            name="avatar"
+                            type="file"
+                            onChange={(e) => setFile(e)}
+                            accept="image/jpeg, image/jpg, image/gif, image/png"
+                            title="Please upload only images"
+                            hidden
+                        />
+                        <Button color="secondary" variant="outlined" component="span">
+                          Upload Avatar
+                        </Button>&nbsp;&nbsp;<span className="filename">{values.fileName}</span>
+                    </label>
+                    <div style={{"marginTop":"30px","textAlign":"center"}}>
+                        <MyButton
                             type="submit"
                             className="login"
-                            value="SignUp"
+                            value="Sign Up"
                         />
                     </div>
                     <Bottom>

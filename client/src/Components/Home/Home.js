@@ -17,6 +17,7 @@ const media = (width) => `@media only screen and (max-width:${width}px)`;
 
 const Parent = styled.div`
     width:100%;
+    padding-bottom:50px;
 `;
 
 const TopMovies = styled.div`
@@ -138,7 +139,7 @@ const Score = styled.table`
 `;
 
 const Title = styled.p`
-    font-size:50px;
+    font-size:45px;
     text-align:left;
     ${media(900)}{
         font-size:40px;
@@ -147,7 +148,7 @@ const Title = styled.p`
 
 const ButtonGroup = styled.div`
     position:absolute;
-    bottom:30px;
+    bottom:10px;
     left:5vw;
     z-index:100;
     margin-top:20px;
@@ -163,6 +164,12 @@ const ButtonGroup = styled.div`
         bottom:10px;
         left:50%;
         transform:translate(-50%, 0);
+    }
+    ${media(500)}{
+        width:100vw;
+        a{
+            width:50vw;
+        }
     }
 `;
 
@@ -208,7 +215,7 @@ const Home = () =>{
         return(
             <Parent className="Home">
                 <TopMovies id="Top">
-                    <Carousel autoPlay infiniteLoop interval="8000">
+                    <Carousel autoPlay infiniteLoop interval="8000" showThumbs={false}>
                         <MovieWrapper
                             desc={"After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."}
                             title={"The Avengers Endgame"}

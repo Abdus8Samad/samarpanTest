@@ -15,7 +15,10 @@ const userSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'user'
     }],
-    avatar:{ type:String, default:"https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png" },
+    avatar:{
+        type:String,
+        default:"https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png"
+    },
     ratedMovies:[{
         type:Schema.Types.ObjectId,
         ref: 'movie'
