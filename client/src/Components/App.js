@@ -13,6 +13,7 @@ import { useSetUser, useUser } from "./Contexts/User";
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import { useSnackbar } from "notistack";
 import { useLoading, useSetLoading } from "./Contexts/LoadingState";
+import Movie from "./Movie/Movie";
 
 const MainBody = styled.div`
     position:relative;
@@ -27,7 +28,7 @@ const ScrollToTop = styled.a`
     padding:15px;
     bottom:10px;
     right:10px;
-    display:${props => props.login ? "none" : "initial"};
+    // display:${props => props.login ? "none" : "initial"};
     border-radius:100%;
     background:#BB86fc;
     color:black;
@@ -40,15 +41,13 @@ const ScrollToTop = styled.a`
 
 const App = (props) => {
     const { enqueueSnackbar } = useSnackbar();
-    const [loginPage, setLoginPage] = useState(false);
     const [topTitle, setTopTitle] = useState("Home");
-    const [profilePage, setprofilePage] = useState(false);
-    const [scrollEffectDone, setScrollEffect] = useState(false);
+    const [RemoveTopbar, setRemoveTopbar] = useState(false);
     const User = useUser();
     const setUser = useSetUser();
     const Loading = useLoading();
     const setLoading = useSetLoading();
-    const getElemDistance = ( elem ) => {
+    const getElemDistance = (elem) => {
         let location = 0;
         if (elem.offsetParent) {
             do {
@@ -58,7 +57,7 @@ const App = (props) => {
         }
         return location >= 0 ? location : 0;
     };
-    const visible = function(elem) {
+    const visible = (elem) => {
         let diff = 450;
         let top = getElemDistance(elem);
         return (top <= window.scrollY + (diff));
@@ -73,20 +72,15 @@ const App = (props) => {
             scrollToTop.style.opacity = 0.75;
             scrollToTop.style.visibility = "visible";
         }
-        if(!scrollEffectDone){
-            let scrollEffect = document.querySelectorAll('.scrollEffect');
-            let cnt = 0;
+        let scrollEffect = document.querySelectorAll('.scrollEffect');
+        let alreadyVisible = document.querySelectorAll('.alreadyVisible');
+        if(alreadyVisible.length !== scrollEffect.length){
             for(let x = 0;x < scrollEffect.length;x++){
                 if(visible(scrollEffect[x])){
                     if(!scrollEffect[x].classList.contains('alreadyVisible')){
                         scrollEffect[x].classList.add('come-in','alreadyVisible');
-                        cnt++;
                     }
                 }
-            }
-            if(cnt === 0){
-                console.log(scrollEffectDone + " " + cnt);
-                setScrollEffect(true);
             }
         }
     }
@@ -102,20 +96,20 @@ const App = (props) => {
             setLoading({...Loading, user : true});
             enqueueSnackbar(err.response.status + " Internal Server Error !", { variant : "error" });
         })
-        window.addEventListener('scroll',scrollingEffect);
-        window.addEventListener('resize',scrollingEffect);
+        window.addEventListener('scroll',() => scrollingEffect());
+        return () => window.removeEventListener('scroll',() => scrollingEffect());
     }, []);
     const MyRoute = (attr) =>{
         return(
             <Route {...attr}>
                 {() =>{
-                        if(attr.path.substr(0, 8) === "/profile"){
-                            setprofilePage(true);
+                        if(attr.path.substr(0, 8) === "/profile" || attr.path.substr(0, 6) === "/Movie"){
+                            setRemoveTopbar(true);
                         } else {
-                            setprofilePage(false);
+                            setRemoveTopbar(false);
                             if(attr.path === "/login" || attr.path === "/register"){
-                                setLoginPage(true);
-                            } else setLoginPage(false);
+                                setRemoveTopbar(true);
+                            } else setRemoveTopbar(false);
                         }
                         setTopTitle(attr.title);
                         return attr.component;
@@ -126,18 +120,19 @@ const App = (props) => {
     }
     return(
         <div className="App">
-            <Helmet><title>{topTitle}</title></Helmet>
+            <Helmet><title>{topTitle} - Samarpan</title></Helmet>
             <MainBody>
                 <Switch>
                     <MyRoute exact path="/login" title="Login" component={<Login />} />
                     <MyRoute exact path="/register" title="SignUp" component={<Register />} />
                     <MyRoute exact path="/profile/:name" title="Profile" component={<Profile />} />
                     <MyRoute exact path="/profile" title="Profile" component={<Profile />} />
+                    <MyRoute exact path="/Movie/:name" title="Movie" component={<Movie />} />
                     <MyRoute exact path="*" component={<Home />} title="Home" />
                 </Switch>
             </MainBody>
-            <ScrollToTop login={loginPage} href="#top" className="scrollToTop" style={{"display":profilePage ? "none" : "initial"}}><ExpandLessRoundedIcon /></ScrollToTop>
-            {loginPage || profilePage ? ("") : (
+            <ScrollToTop href="#top" className="scrollToTop" ><ExpandLessRoundedIcon /></ScrollToTop>
+            {RemoveTopbar ? ("") : (
                 <>
                     <TopBar />
                     <Footer />

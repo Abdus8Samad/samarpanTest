@@ -2,12 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
-import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
 const Parent = styled.div`
-    color:white;
+    color:rgba(255, 255, 255, 0.85);
     width:100%;
     background:#262626;
     padding-bottom:5px;

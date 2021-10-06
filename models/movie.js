@@ -8,8 +8,10 @@ const movieSchema = new Schema({
     Director:String,
     Writer:String,
     criticScore:Number,
+    details:String,
     averageRating:Number,
     type:String,
+    seasons:[Number],
     ratedBy:{
         users:[{
             type:Schema.Types.ObjectId,
@@ -24,11 +26,13 @@ const movieSchema = new Schema({
     genres:[String],
     cast:[{
         name:String,
+        role:String,
         profilePic:String
     }],
     reviews:[{
         author:String,
         body:String,
+        title:String,
         date:{ type:Date, default:Date.now }
     }]
 })

@@ -27,12 +27,13 @@ const TopMovies = styled.div`
 const Movie = styled.div`
     width:100%;
     height:450px;
+    color:rgba(255, 255, 255, 0.9);
     &:after{
-        content:'\A';
+        content:'';
         position:absolute;
         width:100%; height:450px;
         top:0; left:0;
-        background:rgba(0,0,0,0.4);
+        background:rgba(0,0,0,0.45);
         opacity:1;
     }
     ${media(600)}{
@@ -56,7 +57,6 @@ const Overview = styled.div`
     top:10px;
     left:5vw;
     padding:20px;
-    color:white;
     ${media(800)}{
         width:60vw;
         left:0.7vw;
@@ -74,13 +74,11 @@ const Overview = styled.div`
         position:relative;
         top:-15px;
         text-align:left;
-        color:rgba(255, 255, 255, 0.8);
     }
 `;
 
 const Score = styled.table`
     position:absolute;
-    color:white;
     z-index:10;
     text-align:center;
     width:40vw;
@@ -108,6 +106,11 @@ const Score = styled.table`
     td:first-child span{
         position:relative;
         left:-13px;
+    }
+    svg{
+        float:left;
+        font-size:4vw;
+        color:#faaf00;
     }
     ${media(800)}{
         right:0;
@@ -173,6 +176,14 @@ const ButtonGroup = styled.div`
     }
 `;
 
+const Rate = styled.div`
+    position:relative;
+    ${media(600)}{
+        top:7px;
+        left:-5px;
+    }
+`;
+
 const Home = () =>{
     const [lucifer, setLucifer] = useState(luciferPoster);
     const [width, setWidth] = useState(0);
@@ -195,12 +206,14 @@ const Home = () =>{
                             <th>Critic Score</th>
                         </tr>
                         <tr>
-                            <td style={{"color":"rgba(255, 255, 255, 0.8)"}}>
-                                <StarRateRoundedIcon sx={{"float":"left","fontSize":"4vw", "verticalAlign":"bottom", "color":"#faaf00"}} />
-                                <span className="rating">
-                                    {rating}/ 
-                                </span>
-                                <span className="ratedBy">{ratedBy}</span>
+                            <td>
+                                <StarRateRoundedIcon />
+                                <Rate>
+                                    <span className="rating">
+                                        {rating}/ 
+                                    </span>
+                                    <span className="ratedBy">{ratedBy}</span>
+                                </Rate>
                             </td>
                             <td>
                                 <span className="score">{score}</span>

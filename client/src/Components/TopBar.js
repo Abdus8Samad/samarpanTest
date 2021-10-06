@@ -11,13 +11,13 @@ const Parent = styled.div`
     left:50%;
     z-index:100;
     font-size:110%;
-    color:white !important;
+    color:rgba(0, 0, 0, 0.85) !important;
     transform:translate(-50%, 0);
 `;
     
 const List = styled.div`
     position:relative;
-    background:rgba(0, 0, 0, 0.4);
+    background:rgba(0, 0, 0, 0.34);
     backdrop-filter: blur(10px);
     border-radius:25px;
     width:80vw;
