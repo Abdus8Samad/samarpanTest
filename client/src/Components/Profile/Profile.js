@@ -71,6 +71,7 @@ const Avatar = styled.div`
 
 const Img = styled.img`
     width:23vw;
+    height: 23vw;
     position:relative;
     min-width:120px;
     border-radius:50%;
