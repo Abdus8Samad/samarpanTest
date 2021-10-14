@@ -26,12 +26,12 @@ app.get("/getUser/:name", (req,res) =>{
 app.post('/register', (req, res) =>{
     const d = Date.now();
     const { username, password, email, avatar } = req.body;
-    const newUser = {
+    let newUser = {
         username,
         email,
         joinedAt : d,
-        avatar
     }
+    if(avatar !== "") newUser = {...newUser, avatar};
     User.findOne({ username })
     .then(user =>{
         if(user){
@@ -56,7 +56,7 @@ app.post('/register', (req, res) =>{
 })
 
 app.post('/login', passport.authenticate('local'),(req, res) =>{
-    res.json({user: req.user});
+    res.json({user: req.user, status: 200 });
 })
 
 

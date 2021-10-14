@@ -46,7 +46,8 @@ app.get('/', (req, res) => {
 })
 
 const demonSlayer = {
-    name:"Demon Slayer",
+    title:"Demon Slayer: Mugen Train",
+    longTitle:"Demon Slayer: Kimetsu no Yaiba",
     Director:"Haruo Sotozaki",
     Writer:"Koyoharu Gotouge",
     criticScore:96,
@@ -55,11 +56,12 @@ const demonSlayer = {
     seasons:[26, 1],
     details:"TV Series 2019–TV-MA 25min",
     ratedBy:{
-        users:[1,2,3,4,6,7,8,9],
-        critics:[11,23]
+        users:[],
+        critics:[]
     },
-    userRating:{ type: Number, default: 0},
-    genres:[String],
+    poster:"https://m.media-amazon.com/images/M/MV5BN2EwNTUwYWItZTY4ZC00N2Q1LWFhZWQtNjMwMDBkZDVmYThjXkEyXkFqcGdeQXVyOTA2OTk0MDg@._V1_.jpg",
+    wall:"https://i.pinimg.com/originals/96/d1/30/96d1309afdea29151ed8ff027d092eff.jpg",
+    genres:["Animation", "Action", "Adventure"],
     cast:[{
         name:"Natsuki Hanae",
         role:"Tanjiro Kamado",
@@ -79,6 +81,13 @@ const demonSlayer = {
     ]
 }
 
+
+const Movie = require('./models/movie');
+// Movie.create(demonSlayer)
+// .then(movie =>{
+//     console.log(movie);
+// })
+// .catch(err => console.log(err));
 //Routes
 const authRoutes = require('./routes/auth'),
 profileRoutes = require("./routes/profile"),

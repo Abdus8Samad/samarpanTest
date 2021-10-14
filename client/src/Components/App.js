@@ -14,6 +14,7 @@ import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import { useSnackbar } from "notistack";
 import { useLoading, useSetLoading } from "./Contexts/LoadingState";
 import Movie from "./Movie/Movie";
+import Test from "./Test/Test";
 
 const MainBody = styled.div`
     position:relative;
@@ -103,7 +104,7 @@ const App = (props) => {
         return(
             <Route {...attr}>
                 {() =>{
-                        if(attr.path.substr(0, 8) === "/profile" || attr.path.substr(0, 6) === "/Movie"){
+                        if(attr.path.substr(0, 8) === "/profile" || attr.path.substr(0, 6) === "/movie"){
                             setRemoveTopbar(true);
                         } else {
                             setRemoveTopbar(false);
@@ -126,8 +127,9 @@ const App = (props) => {
                     <MyRoute exact path="/login" title="Login" component={<Login />} />
                     <MyRoute exact path="/register" title="SignUp" component={<Register />} />
                     <MyRoute exact path="/profile/:name" title="Profile" component={<Profile />} />
+                    <MyRoute exact path="/movie/:name" title="Movie" component={<Movie />} />
                     <MyRoute exact path="/profile" title="Profile" component={<Profile />} />
-                    <MyRoute exact path="/Movie/:name" title="Movie" component={<Movie />} />
+                    <MyRoute exact path="/test" title="Test" component={<Test />} />
                     <MyRoute exact path="*" component={<Home />} title="Home" />
                 </Switch>
             </MainBody>

@@ -78,7 +78,6 @@ const Data = [
     {
         title:"Demon Slayer: Mugen Train",
         src:"https://m.media-amazon.com/images/M/MV5BN2EwNTUwYWItZTY4ZC00N2Q1LWFhZWQtNjMwMDBkZDVmYThjXkEyXkFqcGdeQXVyOTA2OTk0MDg@._V1_.jpg",
-        link:"/mugen-train",
         genre:"Fantasy",
         rating:9.4
     }
@@ -96,7 +95,7 @@ const MustWatch = () =>{
     const [movies, setMovies] = useState(dummyData);
     useEffect(() =>{
         setTimeout(() => setMovies(Data), 6000);
-    }, [])
+    }, [movies])
     return(
         <Parent>
             <SmallHeading text="Must Watch" /><br /><br />

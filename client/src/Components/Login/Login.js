@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
+import { FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
 import { useSetUser, useUser } from '../Contexts/User';
@@ -10,6 +10,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useLoading } from '../Contexts/LoadingState';
+import Waiting from '../global/Waiting';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -99,24 +100,6 @@ const Bottom = styled.p`
     }
 `;
 
-const Waiting = ({open}) =>{
-    return(
-        <Backdrop
-            sx={{
-                color:"#fff",
-                position:"fixed",
-                top:0,
-                left:0,
-                width:"100vw",
-                height:"100vh"
-            }}
-            open={open}
-        >
-        <CircularProgress color="inherit" />
-        </Backdrop>
-    )
-}
-
 const Main = ({props}) =>{
     const { enqueueSnackbar } = useSnackbar();
     const [values, setValues] = useState({
@@ -145,10 +128,15 @@ const Main = ({props}) =>{
         let { username, password } = values;
         axios.post('/auth/login', { username, password })
         .then(res =>{
-            const { user } = res.data;
-            setUser(user);
-            enqueueSnackbar(`Welcome ${user.username} !`, { variant : "success" });
-            props.history.push("/");
+            const { user, status } = res.data;
+            if(status !== 200){
+                enqueueSnackbar(`${status} Internal Server Error !`, { variant : "error" });
+                setValues({...values, submit:false});
+            } else {
+                setUser(user);
+                enqueueSnackbar(`Welcome ${user.username} !`, { variant : "success" });
+                props.history.push("/");
+            }
         })
         .catch(err =>{
             if(err.response.status === 401){

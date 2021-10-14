@@ -12,6 +12,7 @@ import axios from 'axios';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import FaceIcon from '@mui/icons-material/Face';
 import { useLoading } from '../Contexts/LoadingState';
+import Waiting from '../global/Waiting';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -107,24 +108,6 @@ const Bottom = styled.p`
     }
 `;
 
-const Waiting = ({open}) =>{
-    return(
-        <Backdrop
-            sx={{
-                color:"#fff",
-                position:"fixed",
-                top:0,
-                left:0,
-                width:"100vw",
-                height:"100vh"
-            }}
-            open={open}
-        >
-        <CircularProgress color="inherit" />
-        </Backdrop>
-    )
-}
-
 const LoggedIn = () =>{
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() =>{
@@ -186,12 +169,15 @@ const Main = ({props}) =>{
             if(status === 409){
                 enqueueSnackbar(`Username ${user.username} Already Exists`, { variant : "warning" });
                 setValues({...values, submit: false});
-            } else {
+            } else if(status !== 500) {
                 if(status === "okwitherror") enqueueSnackbar("There was some error with the image", { variant : "warning" });
                 setUser(user);
                 enqueueSnackbar(`Welcome ${user.username}`, { variant : "success" });
                 enqueueSnackbar(`Congrats You Got 10 Points For Joining Us !`, { variant : "success" });
                 props.history.push("/");
+            } else {
+                enqueueSnackbar(`${status} Internal Server Error !`, {  variant : "error"});
+                setValues({...values, submit: false});
             }
         })
         .catch(err =>{

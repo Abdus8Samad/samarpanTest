@@ -5,20 +5,24 @@ passportLocalMongoose = require('passport-local-mongoose');
 
 const userSchema = new Schema({
     username:String,
+    joinedAt: Date,
     email:{ type : String, default : ""},
     isAdmin:{ type : Boolean, default : false },
     isCritic:{ type : Boolean, default : false },
-    joinedAt: Date,
     score:{ type : Number, default: 10},
+    avatar:{
+        type:String,
+        default:"https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png"
+    },
+    moviesRated:[{
+        movie:String,
+        rating:Number
+    }],
     popularity:{ type: String, default: "1%" },
     friends:[{
         type:Schema.Types.ObjectId,
         ref:'user'
     }],
-    avatar:{
-        type:String,
-        default:"https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png"
-    },
     ratedMovies:[{
         type:Schema.Types.ObjectId,
         ref: 'movie'

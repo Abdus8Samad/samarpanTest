@@ -6,7 +6,7 @@ import { useSetUser, useUser } from "../Contexts/User";
 import { useSnackbar } from "notistack";
 import timeSince from "../utils/TimeSince";
 import ResolveLevel from "../utils/ResolveLevel";
-import { Backdrop, CircularProgress, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -14,6 +14,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useLoading } from "../Contexts/LoadingState";
 import { Link } from "react-router-dom";
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
+import Waiting from "../global/Waiting";
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -34,8 +35,6 @@ export const Back = styled.div`
 
 const Avatar = styled.div`
     position:relative;
-    width:fit-content;
-    height:fit-content;
     margin:20px auto;
     &::after{
         content:'';
@@ -71,7 +70,7 @@ const Avatar = styled.div`
 
 const Img = styled.img`
     width:23vw;
-    position:relative;
+    height:23vw;
     min-width:120px;
     border-radius:50%;
 `;
@@ -235,41 +234,9 @@ export const Top = styled.div`
     }
 `;
 
-const Waiting = () =>{
-    return(
-        <Backdrop
-            sx={{
-                color:"#fff",
-                position:"fixed",
-                top:0,
-                left:0,
-                width:"100vw",
-                height:"100vh"
-            }}
-            open={true}
-        >
-        <CircularProgress color="inherit" />
-        </Backdrop>
-    )
-}
-
-const Main = ({props}) =>{
+const Main = ({ props, profile, setProfile, personal, myUser }) =>{
     const { enqueueSnackbar } = useSnackbar();
     const setUser = useSetUser();
-    const myUser = useUser();
-    const [profile, setProfile] = useState({
-        username:"N/A",
-        email:"N/A",
-        avatar:"https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png",
-        reviewedMovies:[],
-        ratedMovies:[],
-        popularity:"0%",
-        score:0,
-        joinedAt:timeSince(Date.now()) + " ago",
-        friends:[],
-        isFriend: false,
-    });
-    const [personal, setPersonal] = useState(false);
     const [friendState, setFriendState] = useState({
         addingFriend: false,
         removingFriend: false
@@ -285,47 +252,6 @@ const Main = ({props}) =>{
             enqueueSnackbar(`${err.response.status} Internal Server Error`, { variant : "error" });
         })
     }
-    useEffect(() =>{
-        const { name } = props.match.params;
-        if(name === undefined){
-            if(myUser !== ""){
-                let d = new Date(myUser.joinedAt);
-                let j = timeSince(d);
-                setProfile({...myUser, joinedAt : j + " ago"});
-                setPersonal(true);
-            } else {
-                enqueueSnackbar("You need to login first !", { variant : "warning" });
-                props.history.push("/login");
-            }
-        }
-        else if(name === myUser.username){
-            let d = new Date(myUser.joinedAt);
-            let j = timeSince(d);
-            setProfile({...myUser, joinedAt : j + " ago"});
-            setPersonal(true);
-        } else {
-            axios.get(`/auth/getUser/${name}`)
-            .then(req =>{
-                const { user, status } = req.data;
-                if(status === 404){
-                    enqueueSnackbar("User Not Found!", { variant : "error" });
-                    props.history.push("/");
-                } else {
-                    let d = new Date(user.joinedAt);
-                    let j = timeSince(d);
-                    let findfriend = undefined;
-                    if(myUser !== "") findfriend = myUser.friends.find((id) => id === user._id);
-                    const isFriend = (findfriend !== undefined);
-                    setProfile({...user, joinedAt : j + " ago", isFriend });
-                }
-            })
-            .catch(err =>{
-                const { status } = err.response;
-                enqueueSnackbar(`${status} : Internal Server Error !`, { variant : "error" });
-                props.history.push("/");
-            })
-        }
-    }, []);
     const addFriend = () =>{
         if(!friendState.addingFriend){
             setFriendState({...friendState, addingFriend : true});
@@ -380,7 +306,7 @@ const Main = ({props}) =>{
                     if(status !== 200){
                         console.log(res.data.msg);
                     } else {
-                        setProfile({...profile, avatar: reader.result});
+                        setProfile({...profile, avatar: reader.result });
                         setUser(profile);
                         enqueueSnackbar("Updated Avatar Successfully !", { variant : "success" });
                     }
@@ -404,7 +330,11 @@ const Main = ({props}) =>{
             <Container className="container">
                 <Details>
                     <div>
-                        <Avatar personal={personal} onClick={() => uploadAvatar()}>
+                        <Avatar
+                            personal={personal}
+                            onClick={() => uploadAvatar()}
+                            // style={{background:`#313131 url(${profile.avatar}) no-repeat fixed top center`}}
+                        >
                             <CameraAltOutlinedIcon />
                             <Img src={profile.avatar} alt="User" />
                             <input
@@ -494,8 +424,72 @@ const Main = ({props}) =>{
 
 const Profile = (props) =>{
     const Loading = useLoading();
+    const myUser = useUser();
+    const { enqueueSnackbar } = useSnackbar();
+    const [personal, setPersonal] = useState(false);
+    const [profile, setProfile] = useState({
+        username:"N/A",
+        email:"N/A",
+        avatar:"https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png",
+        reviewedMovies:[],
+        ratedMovies:[],
+        popularity:"0%",
+        score:0,
+        joinedAt:timeSince(Date.now()) + " ago",
+        friends:[],
+        isFriend: false,
+    });
+    useEffect(() =>{
+        const { name } = props.match.params;
+        if(name === undefined){
+            if(myUser !== ""){
+                let d = new Date(myUser.joinedAt);
+                let j = timeSince(d);
+                setProfile({...myUser, joinedAt : j + " ago"});
+                setPersonal(true);
+            } else {
+                enqueueSnackbar("You need to login first !", { variant : "warning" });
+                props.history.push("/login");
+            }
+        }
+        else if(name === myUser.username){
+            let d = new Date(myUser.joinedAt);
+            let j = timeSince(d);
+            setProfile({...myUser, joinedAt : j + " ago"});
+            setPersonal(true);
+        } else {
+            axios.get(`/auth/getUser/${name}`)
+            .then(req =>{
+                const { user, status } = req.data;
+                if(status === 404){
+                    enqueueSnackbar("User Not Found!", { variant : "error" });
+                    props.history.push("/");
+                } else {
+                    let d = new Date(user.joinedAt);
+                    let j = timeSince(d);
+                    let findfriend = undefined;
+                    if(myUser !== "") findfriend = myUser.friends.find((id) => id === user._id);
+                    const isFriend = (findfriend !== undefined);
+                    setProfile({...user, joinedAt : j + " ago", isFriend });
+                }
+            })
+            .catch(err =>{
+                const { status } = err.response;
+                enqueueSnackbar(`${status} : Internal Server Error !`, { variant : "error" });
+                props.history.push("/");
+            })
+        }
+    }, []);
     return(
-        (!Loading.user) ? (<Waiting />) : (<Main props={props} />)
+        (!Loading.user || profile.popularity === "0%" ) ? (<Waiting open={true} />) : (
+            <Main
+                props={props}
+                profile={profile}
+                setProfile={() => setProfile()}
+                personal={personal}
+                myUser={myUser}
+            />
+        )
     )
 }
 

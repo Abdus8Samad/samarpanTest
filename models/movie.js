@@ -3,15 +3,18 @@ Schema = mongoose.Schema,
 model = mongoose.model;
 
 const movieSchema = new Schema({
-    name:String,
-    duration:Number,
+    title:String,
+    longTitle:String,
     Director:String,
     Writer:String,
+    poster:String,
+    wall:String,
     criticScore:Number,
     details:String,
     averageRating:Number,
     type:String,
     seasons:[Number],
+    genres:[String],
     ratedBy:{
         users:[{
             type:Schema.Types.ObjectId,
@@ -22,8 +25,6 @@ const movieSchema = new Schema({
             ref:'user'
         }]
     },
-    userRating:{ type: Number, default: 0},
-    genres:[String],
     cast:[{
         name:String,
         role:String,

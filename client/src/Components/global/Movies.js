@@ -79,7 +79,7 @@ const Movies = (props) =>{
         <Parent>
             {props.payload.map((movie, index) =>{
                 return(
-                    <Paper to={"/Movie" + movie.link} className="scrollEffect" key={index}>
+                    <Paper to={"/movie/" + movie.title} className="scrollEffect" key={index}>
                         {props.payload[0].state === "dummy" ? (
                             <ImagePlaceholder width={100}/>
                         ) : (<Poster src={movie.src} />)}
