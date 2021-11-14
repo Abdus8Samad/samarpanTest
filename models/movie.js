@@ -5,7 +5,6 @@ model = mongoose.model;
 const movieSchema = new Schema({
     title:String,
     longTitle:String,
-    Director:String,
     Writer:String,
     poster:String,
     wall:String,
@@ -13,6 +12,17 @@ const movieSchema = new Schema({
     details:String,
     averageRating:Number,
     type:String,
+    wiki:String,
+    trailer:String,
+    releasedOn:String,
+    releasedIn:String,
+    storyline:String,
+    runtime:String,
+    origin:String,
+    director:{
+        name:String,
+        img:String
+    },
     seasons:[Number],
     genres:[String],
     ratedBy:{
@@ -28,7 +38,8 @@ const movieSchema = new Schema({
     cast:[{
         name:String,
         role:String,
-        profilePic:String
+        profilePic:String,
+        wiki:String
     }],
     reviews:[{
         author:String,

@@ -8,6 +8,7 @@ const Title = styled.p`
     ${media(600)}{
         font-size:25px;
     }
+    ${props => props.sx}
 `;
 
 const Hr = styled.hr`
@@ -21,13 +22,14 @@ const Hr = styled.hr`
     ${media(600)}{
         width:60vw;
     }
+    ${props => props.sx}
 `;
 
-export const SmallHeading = ({text}) =>{
+export const SmallHeading = ({text, sx}) =>{
     return(
         <>
-            <Title>{text}</Title>
-            <Hr />
+            <Title sx={sx}>{text}</Title>
+            <Hr sx={sx} />
         </>
     )
 }

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import styled from 'styled-components';
 import MyButton from "../global/MyButton";
-import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 import { Carousel } from "react-responsive-carousel";
 import Trending from "./Trending";
 import MustWatch from "./MustWatch";
@@ -12,6 +11,7 @@ import luciferPoster from '../images/LuciferPoster.png';
 import luciferPotrait from '../images/LuciferPosterPotrait.png';
 import aot from '../images/AOTPoster.png';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { ScoreLevel } from "../utils/ResolveLevel";
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -26,12 +26,13 @@ const TopMovies = styled.div`
 
 const Movie = styled.div`
     width:100%;
-    height:450px;
+    height:500px;
     color:rgba(255, 255, 255, 0.9);
+    position:relative;
     &:after{
         content:'';
         position:absolute;
-        width:100%; height:450px;
+        width:100%; height:100%;
         top:0; left:0;
         background:rgba(0,0,0,0.45);
         opacity:1;
@@ -54,7 +55,7 @@ const Overview = styled.div`
     position:absolute;
     width:50vw;
     z-index:10;
-    top:10px;
+    top:40px;
     left:5vw;
     padding:20px;
     ${media(800)}{
@@ -99,13 +100,9 @@ const Score = styled.table`
         font-size:1.2vw;
     }
     span.score{
-        color:darkorange;
+        color:${props => props.scoreColor};
         font-size:3vw;
         font-weight:bolder;
-    }
-    td:first-child span{
-        position:relative;
-        left:-13px;
     }
     svg{
         float:left;
@@ -199,7 +196,7 @@ const Home = () =>{
                     <MyButton to='/avengers/rate' back="none" color="white" size="25vw" border label='Rate Now' />
                     <MyButton to='/avengers' back="black" color="white" size="25vw" label='More Info' />
                 </ButtonGroup>
-                <Score>
+                <Score scoreColor={ScoreLevel(score)}>
                     <tbody>
                         <tr>
                             <th>SMP Rating</th>
@@ -207,7 +204,6 @@ const Home = () =>{
                         </tr>
                         <tr>
                             <td>
-                                <StarRateRoundedIcon />
                                 <Rate>
                                     <span className="rating">
                                         {rating}/ 
@@ -227,7 +223,7 @@ const Home = () =>{
     const Main = () =>{
         return(
             <Parent className="Home">
-                <TopMovies id="Top">
+                <TopMovies>
                     <Carousel autoPlay infiniteLoop interval="8000" showThumbs={false}>
                         <MovieWrapper
                             desc={"After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."}

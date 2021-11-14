@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const Parent = styled(Link)`
-	border-radius:5px;
 	padding:15px;
 	text-align:center;
 	background:${props => props.back};
@@ -17,6 +16,7 @@ const Parent = styled(Link)`
 	&:hover{
 		opacity:1;
 	}
+	${props => props.sx}
 `;
 
 const MyButton = (props) => <Parent {...props}>{props.label}</Parent>

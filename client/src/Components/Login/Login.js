@@ -100,7 +100,7 @@ const Bottom = styled.p`
     }
 `;
 
-const Main = ({props}) =>{
+const Main = ({props, setLogged}) =>{
     const { enqueueSnackbar } = useSnackbar();
     const [values, setValues] = useState({
         username: '',
@@ -133,9 +133,10 @@ const Main = ({props}) =>{
                 enqueueSnackbar(`${status} Internal Server Error !`, { variant : "error" });
                 setValues({...values, submit:false});
             } else {
+                setLogged();
                 setUser(user);
                 enqueueSnackbar(`Welcome ${user.username} !`, { variant : "success" });
-                props.history.push("/");
+                props.history.goBack();
             }
         })
         .catch(err =>{
@@ -237,9 +238,13 @@ const LoggedIn = () =>{
 const Login = (props) =>{
     const User = useUser();
     const Loading = useLoading();
+    const [justLoggedIn, setJustLogged] = useState(false);
+    useEffect(() =>{
+        console.log(justLoggedIn);
+    })
     return(
         (!Loading.user) ? (<Waiting open={true} />) : (
-            (User !== "") ? (<LoggedIn />) : (<Main props={props}/>)
+            (User !== "" && !justLoggedIn) ? (<LoggedIn />) : (<Main props={props} setLogged={() => setJustLogged(true)} />)
         )
     )
 }

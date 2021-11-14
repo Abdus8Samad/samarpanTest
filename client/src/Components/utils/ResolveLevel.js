@@ -7,4 +7,16 @@ const ResolveLevel = (score) =>{
     else return ["Critic", "rgba(255, 0, 0, "];
 }
 
-export default ResolveLevel;
+const ScoreLevel = (score) =>{
+    if(score <= 30) return "white";
+    else if(score <= 50) return "lightgreen";
+    else if(score <= 70) return "green";
+    else if(score <= 80) return "darkorange";
+    else if(score <= 90) return "orangered";
+    else return "red";
+}
+
+export {
+    ResolveLevel,
+    ScoreLevel,
+};

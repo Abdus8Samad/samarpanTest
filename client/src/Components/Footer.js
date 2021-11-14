@@ -83,7 +83,6 @@ const Links = styled(Link)`
         border-bottom:5px solid white;
         margin-top:-5px;
         margin-bottom:20px;
-        width:15%;
         min-width:100px;
         svg{
             color:red;

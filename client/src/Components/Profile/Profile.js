@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useSetUser, useUser } from "../Contexts/User";
 import { useSnackbar } from "notistack";
 import timeSince from "../utils/TimeSince";
-import ResolveLevel from "../utils/ResolveLevel";
+import { ResolveLevel } from "../utils/ResolveLevel";
 import { Tooltip } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -29,16 +29,21 @@ export const Back = styled.div`
     z-index:-20;
     height:100vh;
     width:100vw;
-    background:radial-gradient(circle, rgba(26,26,26,1) 0%, rgba(18,18,18,1) 100%) no-repeat;
+    background: rgb(27,27,27);
+    background: linear-gradient(0deg, rgba(27,27,27,1) 10%, rgba(18,18,18,1) 100%);
     background-attachment:fixed;
 `;
 
 const Avatar = styled.div`
     position:relative;
     margin:20px auto;
+    width:23vw;
+    height:23vw;
+    min-width:120px;
+    border-radius:50%;
     &::after{
         content:'';
-        width:102.2%;
+        width:100%;
         height:100%;
         position:absolute;
         z-index:50;
@@ -80,7 +85,6 @@ const Container = styled.div`
     width:90vw;
     padding:10px 10px 0 10px;
     min-height:90vh;
-    background:radial-gradient(circle, rgba(26,26,26,1) 0%, rgba(18,18,18,1) 100%) no-repeat;
     margin:40px auto;
     border-radius:20px;
     z-index:40;
@@ -93,7 +97,7 @@ const Container = styled.div`
 const Details = styled.div`
     display:flex;
     width:100%;
-    div{
+    div:not(.avatar){
         width:50%;
     }
     justify-content:space-around:
@@ -102,7 +106,7 @@ const Details = styled.div`
     top:40px;
     ${media(700)}{
         display:block;
-        div{
+        div:not(.avatar){
             width:100%;
             text-align:center;
         }
@@ -333,6 +337,7 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
                         <Avatar
                             personal={personal}
                             onClick={() => uploadAvatar()}
+                            className="avatar"
                             // style={{background:`#313131 url(${profile.avatar}) no-repeat fixed top center`}}
                         >
                             <CameraAltOutlinedIcon />

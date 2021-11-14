@@ -1,3 +1,6 @@
+*{
+  box-sizing: border-box;
+}
 a{
   text-decoration: none !important;
 }
@@ -8,12 +11,12 @@ html, body {
   font-family: EXO;
   letter-spacing: 1.5px;
   color:rgba(0, 0, 0, 0.8);
-  background:rgba(18, 18, 18, 0);
+  background:rgb(18, 18, 18);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-div.background{
+div.background {
   position:fixed;
   width:100vw;
   height:100vh;
@@ -36,7 +39,7 @@ code {
 }
 .come-in{
   position: relative;
-  top:150px;
+  top:100px;
   animation: come-in 0.8s ease forwards;
 }
 .fade-in{
