@@ -5,7 +5,6 @@ model = mongoose.model;
 const movieSchema = new Schema({
     title:String,
     longTitle:String,
-    Writer:String,
     poster:String,
     wall:String,
     criticScore:Number,
@@ -19,6 +18,10 @@ const movieSchema = new Schema({
     storyline:String,
     runtime:String,
     origin:String,
+    writer:{
+        name:String,
+        avatar:String
+    },
     director:{
         name:String,
         img:String
@@ -44,7 +47,7 @@ const movieSchema = new Schema({
     reviews:[{
         author:String,
         body:String,
-        title:String,
+        avatar:String,
         date:{ type:Date, default:Date.now }
     }]
 })

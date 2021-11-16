@@ -319,7 +319,7 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
             if(file){
                 // Will trigger load when loaded with result -> file's data in base64 encoding
                 reader.readAsDataURL(file);
-            }    
+            }
         }
     }
     const uploadAvatar = () =>{

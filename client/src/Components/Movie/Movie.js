@@ -4,20 +4,18 @@ import axios from 'axios';
 import styled from 'styled-components';
 import Waiting from '../global/Waiting';
 import { withRouter } from 'react-router';
-import { Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Tooltip, Typography } from '@mui/material';
+import { Avatar, Backdrop, Card, CardActions, CardContent, CardHeader, Dialog, DialogContent, Fade, IconButton, Modal, Tooltip, Typography } from '@mui/material';
 import { Button } from '../Profile/Profile';
 import { SmallHeading } from '../global/styles';
 import { Link } from 'react-router-dom';
+import { ScoreLevel } from '../utils/ResolveLevel';
 import MyButton from '../global/MyButton';
 import HoverRating from '../global/Rating';
-import { ScoreLevel } from '../utils/ResolveLevel';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MoreVertIcon from '@mui/icons-material/MoreVert';import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import demonslayerwall from '../images/demonSlayerWall.png';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import { red } from '@mui/material/colors';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -386,7 +384,6 @@ const Movies = styled.div`
     flex-flow:row wrap;
     width:100%;
     justify-content:space-around;
-    align-items:flex-start;
     gap:20px 0;
     a{
         border-radius:5px;
@@ -414,15 +411,29 @@ const Movies = styled.div`
 `;
 
 const Reviews = styled.div`
-    p.top{
+	p.top{
+		margin:auto;
+		width:60%;
+		padding-bottom:23px;
         font-size:70px;
         text-align:center;
+		border-bottom:1.4px solid rgba(255, 255, 255, 0.6);
     }
+	${media(700)}{
+		p.top{
+			font-size:45px;
+		}
+	}
+	${media(500)}{
+		p.top{
+			width:80%;
+			font-size:35px;
+		}
+	}
 `;
 
 const Container = styled.div`
-    max-width: 950px;
-    width: 100%;
+    width: 91%;
     overflow: hidden;
     margin:auto;
     padding: 80px 0;
@@ -448,42 +459,18 @@ const Container = styled.div`
 
 const MainCard = styled.div`
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     width: 200%;
-    transition: 1s;      
+    transition: 1s;
 `;
 
 const Cards = styled.div`
     width: calc(100% / 2 - 10px);
     display: flex;
     flex-wrap: wrap;
+	gap:25px 10px;
     margin: 0 20px;
-    justify-content: space-between;
-`;
-
-const Content2 = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-`;
-
-const Img2 = styled.div`
-    height: 130px;
-    width: 130px;
-    border-radius: 50%;
-    padding: 3px;
-    background: #FF676D;
-    margin-bottom: 14px;
-    img{
-        height: 100%;
-        width: 100%;
-        border: 3px solid #ffff;
-        border-radius: 50%;
-        object-fit: cover;      
-    }
+    justify-content: space-around;
 `;
 
 const Buttons = styled.div`
@@ -496,7 +483,7 @@ const Buttons = styled.div`
         width: 15px;
         border-radius: 20px;
         background: #fff;
-        margin: 0 4px;
+        margin: 25px 4px;
         cursor: pointer;
         transition: all 0.5s ease;      
     }
@@ -505,7 +492,50 @@ const Buttons = styled.div`
     }
 `;
 
+const SCard = styled(Card)`
+	width: calc(100% / 3 - 10px);
+	background-color:rgba(60, 60, 60, 0.1) !important;
+	box-shadow:0 0 15px rgba(255, 255, 255, 0.1) !important;
+	border-radius:13px !important;
+    height:fit-content !important;
+	transition:all 0.35s ease !important;
+	*{
+		color: rgba(255, 255, 255, 0.85) !important;
+	}
+	&:hover{
+		transform:translateY(-15px);
+		cursor:pointer;
+	}
+	${media(900)}{
+		width: calc(100% / 2 - 10px);
+	}
+	${media(700)}{
+		width: 100%;
+	}
+`;
+
+const DialogCard = styled(Card)`
+    margin:auto;
+    z-index:10001;
+	width:100%;
+    min-width:250px;
+	background-color:rgba(40, 40, 40, 1) !important;
+	box-shadow:0 0 15px rgba(255, 255, 255, 0.1) !important;
+	border-radius:13px !important;
+	*{
+		color: rgba(255, 255, 255, 0.85) !important;
+	}
+`;
+
+const SDialog = styled(Dialog)`
+    overflow:scroll !important;
+    max-width:100% !important;
+    width:100% !important;
+    background:none !important;
+`;
+
 const Main = ({ movie, props }) =>{
+	const [isModal, setModal] = useState([false, -1]);
     return(
         <Parent>
             <TopBox back={demonslayerwall}>
@@ -517,7 +547,7 @@ const Main = ({ movie, props }) =>{
                     </Tooltip>
                     <MainContent>
                         <MovieInfo>
-                            <Desc>Movie 2020 - 1h 57m<br /><br />Genre: {movie.genres.map(g => <Genre>{g}</Genre>)}</Desc>
+                            <Desc>{movie.details}<br /><br />Genre: {movie.genres.map(g => <Genre>{g}</Genre>)}</Desc>
                             <P>Your Rating</P>
                             <HoverRating user="asd" parentProps={{...props}} />
                             <BigTitle>
@@ -668,56 +698,107 @@ const Main = ({ movie, props }) =>{
                 </Right>
             </Details>
             <Reviews>
-                <p className="top">Top Reviews</p>
-                <Container>
-    <input type="radio" name="dot" id="one" />
-    <input type="radio" name="dot" id="two" />
-    <MainCard className="mainCard">
-        <Cards>
-        <Card sx={{ maxWidth: 345 }}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
-      />
-      <CardMedia
-        component="img"
-        height="194"
-        image="/static/images/cards/paella.jpg"
-        alt="Paella dish"
-      />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the mussels,
-          if you like.
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
-    </Card>
-        </Cards>
-    </MainCard>
-    <Buttons className="button">
-      <label for="one" className="active one"></label>
-      <label for="two" className="two"></label>
-    </Buttons>
-  </Container>
+                <p className="top scrollEffect">Top Reviews</p>
+                <Container className="scrollEffect">
+                    <input type="radio" name="dot" id="one" />
+                    <input type="radio" name="dot" id="two" />
+                    <MainCard className="mainCard">
+                        {
+                            (movie.reviews.reduce((r, e, i) =>{
+                                return(
+                                    ((i % 3) ? r[r.length - 1].push(e) : r.push([e])) && r
+                                )
+                            }, [])).map((group, index) =>
+                                <Cards key={index}>
+                                    {
+                                        group.map((review, index) =>
+                                            <>
+                                                <SCard onClick={() => setModal([true, movie.reviews.indexOf(review)])} key={movie.reviews.indexOf(review)}>
+                                                    <CardHeader
+                                                        avatar={
+                                                            <Avatar alt="avatar" src={review.avatar} />
+                                                        }
+                                                        action={
+                                                            <IconButton aria-label="settings">
+                                                                <MoreVertIcon />
+                                                            </IconButton>
+                                                        }
+                                                        title={review.author}
+                                                        subheader="September 14, 2016"
+                                                    />
+                                                    <CardContent>
+                                                        <Typography variant="body2" color="text.secondary">
+                                                            {
+                                                                (review.body.length < 240) ? 
+                                                                    (review.body) : 
+                                                                    (review.body.substr(0, 240) + "...")
+                                                            }
+                                                        </Typography>
+                                                    </CardContent>
+                                                    <CardActions disableSpacing>
+                                                        <IconButton aria-label="add to favorites">
+                                                            <FavoriteIcon />
+                                                        </IconButton>
+                                                        <IconButton aria-label="share">
+                                                            <ShareIcon />
+                                                        </IconButton>
+                                                    </CardActions>
+                                                </SCard>
+                                                <Dialog
+                                                    open={isModal[0] && movie.reviews.indexOf(review) === isModal[1]}
+                                                    onClose={() => setModal([false, -1])}
+                                                    scroll={"paper"}
+                                                    aria-labelledby="scroll-dialog-title"
+                                                    aria-describedby="scroll-dialog-description"
+                                                    maxWidth="md"
+                                                    PaperProps={{
+                                                        style: {
+                                                            backgroundColor: 'transparent'
+                                                        },
+                                                    }}
+                                                >
+                                                    <DialogCard>
+                                                        <CardHeader
+                                                            avatar={
+                                                                <Avatar alt="avatar" src={review.avatar} />
+                                                            }
+                                                            action={
+                                                                <IconButton aria-label="settings">
+                                                                    <MoreVertIcon />
+                                                                </IconButton>
+                                                            }
+                                                            title={review.author}
+                                                            subheader="September 14, 2016"
+                                                        />
+                                                            <DialogContent dividers={true}>
+                                                            {/* <CardContent> */}
+                                                                <Typography variant="body2" color="text.secondary">
+                                                                    {review.body}
+                                                                </Typography>
+                                                            {/* </CardContent> */}
+                                                            </DialogContent>
+                                                            <CardActions disableSpacing>
+                                                                <IconButton aria-label="add to favorites">
+                                                                <FavoriteIcon />
+                                                                </IconButton>
+                                                                <IconButton aria-label="share">
+                                                                <ShareIcon />
+                                                                </IconButton>
+                                                            </CardActions>
+                                                    </DialogCard>
+                                                </Dialog>
+                                            </>
+                                        )
+                                    }
+                                </Cards>
+                            )
+                        }
+                    </MainCard>
+                    <Buttons className="button">
+                        <label for="one" className="active one"></label>
+                        <label for="two" className="two"></label>
+                    </Buttons>
+                </Container>
             </Reviews>
         </Parent>
     )

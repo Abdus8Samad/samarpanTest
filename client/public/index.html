@@ -38,6 +38,37 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <div class="background"></div>
+	<!-- Fix ScrollEffect For Now -->
+    <script defer>
+		const getElemDistance = (elem) => {
+			let location = 0;
+			if (elem.offsetParent) {
+				do {
+					location += elem.offsetTop;
+					elem = elem.offsetParent;
+				} while (elem);
+			}
+			return location >= 0 ? location : 0;
+		};
+
+		const visible = (elem) => {
+			let diff = 450;
+			let top = getElemDistance(elem);
+			return (top <= window.scrollY + (diff));
+		};
+
+		const scrollEffect = () =>{
+			const d = document.querySelectorAll('.scrollEffect');
+			for(let e of d){
+				if(visible(e) && !e.classList.contains("alreadyVisible")){
+					e.classList.add("come-in", "alreadyVisible");
+				}
+			}
+		}
+		scrollEffect();
+		window.addEventListener('scroll', scrollEffect);
+		window.addEventListener('resize', scrollEffect);
+    </script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

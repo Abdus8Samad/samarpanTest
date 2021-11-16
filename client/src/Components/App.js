@@ -64,14 +64,18 @@ const App = (props) => {
         })
     }
     useEffect(() =>{
+        /* Set Lazy Loading In Images */
+        let imgs = document.querySelectorAll('img');
+        for(let img of imgs) img.loading = "lazy";
+        /* -------------------------- */
         getUser();
-        scrollingEffect();
-        window.addEventListener('load', () => scrollingEffect());
-        window.addEventListener('scroll', () => scrollingEffect());
-        return () =>{
-            window.removeEventListener('load', () => scrollingEffect);
-            window.removeEventListener('scroll', () => scrollingEffect());
-        }
+        // scrollingEffect();
+        // window.addEventListener('load', () => scrollingEffect());
+        // window.addEventListener('scroll', () => scrollingEffect());
+        // return () =>{
+        //     window.removeEventListener('load', () => scrollingEffect);
+        //     window.removeEventListener('scroll', () => scrollingEffect());
+        // }
     }, []);
     const MyRoute = (attr) =>{
         return(

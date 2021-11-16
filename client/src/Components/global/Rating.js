@@ -4,6 +4,7 @@ import Rating from '@mui/material/Rating';
 import Box from '@mui/material/Box';
 import StarIcon from '@mui/icons-material/Star';
 import { useSnackbar } from 'notistack';
+import axios from 'axios';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -51,46 +52,51 @@ const SBox = styled(Box)`
 `;
 
 const HoverRating = ({ parentProps, user }) => {
-  const [value, setValue] = useState(4);
-  const [hover, setHover] = useState(-1);
-  const { enqueueSnackbar } = useSnackbar();
-  const login = () =>{
-	  enqueueSnackbar("Login First !", { variant: "warning" });
-	  parentProps.history.push("/login");
-  }
-  return (
-    <SBox
-  		onClick={user === "" ? login : ""}
-    >
-        {user === "" ?
-            <Rating
-                name="disabled"
-                value={2}
-                max={10}
-                disabled
-                style={{"fontSize":"30px","color":"white"}}
-                emptyIcon={<StarIcon style={{"fontSize":"30px","color":"black"}} />}
-            /> : 
-            <>
+    const [value, setValue] = useState(4);
+    const [hover, setHover] = useState(-1);
+    const { enqueueSnackbar } = useSnackbar();
+    const login = () =>{
+        enqueueSnackbar("Login First !", { variant: "warning" });
+        parentProps.history.push("/login");
+    }
+    const Rate = () =>{
+        setValue(hover);
+        axios.post('/rate', { value })
+        .then()
+    }
+    return (
+        <SBox
+            onClick={user === "" ? login : ""}
+        >
+            {user === "" ?
                 <Rating
-                    name="hover-feedback"
-                    value={value}
+                    name="disabled"
+                    value={2}
                     max={10}
-                    precision={0.5}
-                    onChangeActive={(event, newHover) => {
-	                    setHover(newHover);
-                    }}
-					onClick={() => setValue(hover)}
+                    disabled
                     style={{"fontSize":"30px","color":"white"}}
-                    emptyIcon={<StarIcon style={{"fontSize":"30px","color":"rgba(0, 0, 0, 0.55)"}} />}
-                />
-                {value !== null && (
-                    <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : value]}</Box>
-                )}
-            </>
-        }
-    </SBox>
-  );
+                    emptyIcon={<StarIcon style={{"fontSize":"30px","color":"black"}} />}
+                /> : 
+                <>
+                    <Rating
+                        name="hover-feedback"
+                        value={value}
+                        max={10}
+                        precision={0.5}
+                        onChangeActive={(event, newHover) => {
+                            setHover(newHover);
+                        }}
+                        onClick={() => Rate()}
+                        style={{"fontSize":"30px","color":"white"}}
+                        emptyIcon={<StarIcon style={{"fontSize":"30px","color":"rgba(0, 0, 0, 0.55)"}} />}
+                    />
+                    {value !== null && (
+                        <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : value]}</Box>
+                    )}
+                </>
+            }
+        </SBox>
+    );
 }
 
 export default HoverRating;

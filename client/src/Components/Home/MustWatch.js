@@ -94,7 +94,7 @@ const Parent = styled.div`
 const MustWatch = () =>{
     const [movies, setMovies] = useState(dummyData);
     useEffect(() =>{
-        setTimeout(() => setMovies(Data), 6000);
+        setTimeout(() => setMovies(Data), 4000);
     }, [movies])
     return(
         <Parent>

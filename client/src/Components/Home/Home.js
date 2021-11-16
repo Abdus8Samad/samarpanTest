@@ -10,8 +10,8 @@ import strangerThings from '../images/StrangerThingsPoster.png';
 import luciferPoster from '../images/LuciferPoster.png';
 import luciferPotrait from '../images/LuciferPosterPotrait.png';
 import aot from '../images/AOTPoster.png';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { ScoreLevel } from "../utils/ResolveLevel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -39,9 +39,6 @@ const Movie = styled.div`
     }
     ${media(600)}{
         height:800px;
-        &:after{
-            height:800px;
-        }
     }
 `;
 
@@ -183,7 +180,7 @@ const Rate = styled.div`
 
 const Home = () =>{
     const [lucifer, setLucifer] = useState(luciferPoster);
-    const [width, setWidth] = useState(0);
+    // const [width, setWidth] = useState(0);
     const MovieWrapper = ({rating, ratedBy, score, src, desc, title}) =>{
         return(
             <Movie>
