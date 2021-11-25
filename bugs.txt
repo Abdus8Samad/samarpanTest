@@ -1,0 +1,4 @@
+1. ScrollEffect.
+2. Review Back Button.
+3. Multiple Snackbars.
+4. Big images Glitches Page.

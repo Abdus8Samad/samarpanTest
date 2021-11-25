@@ -191,7 +191,7 @@ const Home = () =>{
                 </Overview>
                 <ButtonGroup>
                     <MyButton to='/avengers/rate' back="none" color="white" size="25vw" border label='Rate Now' />
-                    <MyButton to='/avengers' back="black" color="white" size="25vw" label='More Info' />
+                    <MyButton to={`/movie/${title}`} back="black" color="white" size="25vw" label='More Info' />
                 </ButtonGroup>
                 <Score scoreColor={ScoreLevel(score)}>
                     <tbody>
@@ -224,7 +224,7 @@ const Home = () =>{
                     <Carousel autoPlay infiniteLoop interval="8000" showThumbs={false}>
                         <MovieWrapper
                             desc={"After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."}
-                            title={"The Avengers Endgame"}
+                            title={"Avengers"}
                             src={avengers}
                             score={"86"}
                             rating={"9.2"}

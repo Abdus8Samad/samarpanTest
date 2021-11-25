@@ -69,13 +69,13 @@ const App = (props) => {
         for(let img of imgs) img.loading = "lazy";
         /* -------------------------- */
         getUser();
-        // scrollingEffect();
-        // window.addEventListener('load', () => scrollingEffect());
-        // window.addEventListener('scroll', () => scrollingEffect());
-        // return () =>{
-        //     window.removeEventListener('load', () => scrollingEffect);
-        //     window.removeEventListener('scroll', () => scrollingEffect());
-        // }
+        scrollingEffect();
+        window.addEventListener('load', () => scrollingEffect());
+        window.addEventListener('scroll', () => scrollingEffect());
+        return () =>{
+            window.removeEventListener('load', () => scrollingEffect);
+            window.removeEventListener('scroll', () => scrollingEffect());
+        }
     }, []);
     const MyRoute = (attr) =>{
         return(
@@ -101,7 +101,7 @@ const App = (props) => {
             </Route>
         )
     }
-    const scrollTop = (e) =>{
+    const scrollTop = () =>{
         window.scrollTo({
             top: 0, 
             behavior: 'smooth'
@@ -121,7 +121,7 @@ const App = (props) => {
                     <MyRoute exact path="*" title="Home" component={<Home />} />
                 </Switch>
             </MainBody>
-            <ScrollToTop onClick={scrollTop} className="scrollToTop" ><ExpandLessRoundedIcon /></ScrollToTop>
+            <ScrollToTop onClick={() => scrollTop()} className="scrollToTop" ><ExpandLessRoundedIcon /></ScrollToTop>
             {RemoveTopbar ? (isFooter ? <Footer /> : "" ) : (
                 <>
                     <TopBar />

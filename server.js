@@ -148,8 +148,9 @@ const demonSlayer = {
     ]
 };
 
-
 const Movie = require('./models/movie');
+// const kunal = require('./kunal');
+// const vans = require('./vans');
 // Movie.create(demonSlayer)
 // .then(movie =>{
 //     console.log(movie);
@@ -158,12 +159,14 @@ const Movie = require('./models/movie');
 //Routes
 const authRoutes = require('./routes/auth'),
 profileRoutes = require("./routes/profile"),
-indexRoutes = require("./routes/index");
+indexRoutes = require("./routes/index"),
+movieRoutes = require("./routes/movie");
 
 // Using the routes
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
 app.use('/profile', profileRoutes);
+app.use('/movie', movieRoutes);
 
 app.listen(PORT, () => {
     console.log(`Listening at port ${PORT}`);

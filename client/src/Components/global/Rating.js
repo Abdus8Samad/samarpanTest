@@ -36,22 +36,40 @@ const SBox = styled(Box)`
 	width: 100%;
 	display: flex;
 	align-items: center;
-	font-size: 30px;
-	${media(550)}{
-		font-size:20px;
-		*{
-			font-size:20px !important;
-		}
-	}
-    ${media(400)}{
-		font-size:15px;
-		*{
-			font-size:15px !important;
-		}
-	}
+    span{
+        color:white !important;
+    }
 `;
 
-const HoverRating = ({ parentProps, user }) => {
+const CanRate = styled.div`
+    width:90%;
+    margin:auto;
+    font-size:30px;
+    span.rateText{
+        margin-left:10px;
+    }
+    ${media(900)}{
+        margin-top:20px;
+        & > span{
+            width:fit-content;
+            display:block !important;
+            margin:auto;
+        }
+        span.rateText{
+            margin:50px auto 0 auto;
+        }
+        *{
+            font-size:35px !important;
+        }
+    }
+    ${media(700)}{
+        *{
+            font-size:24px !important;
+        }
+    }
+`;
+
+const HoverRating = ({ title, parentProps, user }) => {
     const [value, setValue] = useState(4);
     const [hover, setHover] = useState(-1);
     const { enqueueSnackbar } = useSnackbar();
@@ -61,7 +79,7 @@ const HoverRating = ({ parentProps, user }) => {
     }
     const Rate = () =>{
         setValue(hover);
-        axios.post('/rate', { value })
+        axios.post('/rate', { value, title })
         .then()
     }
     return (
@@ -74,26 +92,24 @@ const HoverRating = ({ parentProps, user }) => {
                     value={2}
                     max={10}
                     disabled
-                    style={{"fontSize":"30px","color":"white"}}
-                    emptyIcon={<StarIcon style={{"fontSize":"30px","color":"black"}} />}
+                    emptyIcon={<StarIcon style={{"color":"black"}} />}
                 /> : 
-                <>
-                    <Rating
-                        name="hover-feedback"
-                        value={value}
-                        max={10}
-                        precision={0.5}
-                        onChangeActive={(event, newHover) => {
-                            setHover(newHover);
-                        }}
-                        onClick={() => Rate()}
-                        style={{"fontSize":"30px","color":"white"}}
-                        emptyIcon={<StarIcon style={{"fontSize":"30px","color":"rgba(0, 0, 0, 0.55)"}} />}
-                    />
-                    {value !== null && (
-                        <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : value]}</Box>
-                    )}
-                </>
+                <CanRate>
+                    <span>
+                        <Rating
+                            name="hover-feedback"
+                            value={value}
+                            max={10}
+                            precision={0.5}
+                            onChangeActive={(event, newHover) => {
+                                setHover(newHover);
+                            }}
+                            onClick={() => Rate()}
+                            emptyIcon={<StarIcon style={{"color":"rgba(0, 0, 0, 0.55)"}} />}
+                        />
+                    </span>
+                    <span className="rateText">{labels[hover !== -1 ? hover : value]}</span>
+                </CanRate>
             }
         </SBox>
     );

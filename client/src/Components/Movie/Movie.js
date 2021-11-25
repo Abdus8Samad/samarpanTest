@@ -37,7 +37,7 @@ const dummyData = [
         src:"https://cdn.shopify.com/s/files/1/0969/9128/products/PeakyBlinders-ThomasShelby-GarrisonBombing-NetflixTVShow-ArtPoster_a29a5be9-9611-43d9-b415-18655f60c629.jpg?v=1619864667",
     },
     {
-        title:"No time to die",
+        title:"No Time to Die",
         src:"https://m.media-amazon.com/images/M/MV5BYWQ2NzQ1NjktMzNkNS00MGY1LTgwMmMtYTllYTI5YzNmMmE0XkEyXkFqcGdeQXVyMjM4NTM5NDY@._V1_.jpg",
     },
 ];
@@ -71,7 +71,7 @@ const TopBox = styled.div`
         height:100%;
         width:30%;
     }
-    ${media(800)}{
+    ${media(900)}{
         height:fit-content;
         padding-bottom:25px;
         &:before{
@@ -90,8 +90,11 @@ const MainContent = styled.div`
     letter-spacing:0 !important;
     width:90%;
     margin:auto;
-    ${media(800)}{
+    ${media(900)}{
         display:block;
+    }
+    ${media(350)}{
+        width:100%;
     }
 `;
 
@@ -99,9 +102,9 @@ const MovieInfo = styled.div`
     position:relative;
     width:80%;
     padding-left:30px;
-    ${media(800)}{
+    height:530px;
+    ${media(900)}{
         width:85vw;
-        height:550px;
     }
 `;
 
@@ -111,7 +114,7 @@ const MovieCast = styled.div`
         color:rgba(255, 255, 255, 0.6);
         font-size:small;
     }
-    ${media(800)}{
+    ${media(900)}{
         margin-top:80px;
         width:100%;
     }
@@ -159,7 +162,7 @@ const Character = styled(Link)`
     &:hover{
         transform:scale(1.1);
     }
-    ${media(800)}{
+    ${media(900)}{
         width:20%;
     }
     ${media(500)}{
@@ -177,7 +180,7 @@ const BigTitle = styled.div`
     a:nth-child(3){
         margin-left:25px;
     }
-    ${media(500)}{
+    ${media(700)}{
         a{
             font-size:15px;
             padding:10px;    
@@ -191,14 +194,14 @@ const Released = styled.p`
     span:first-child{
         opacity:0.6;
     }
-    ${media(500)}{
+    ${media(700)}{
         font-size:12px;
     }
 `;
 
 const Title = styled.p`
     word-break:break-all;
-    width:80%;
+    width:100%;
     font-size:40px;
     position:relative;
     &:after{
@@ -207,10 +210,10 @@ const Title = styled.p`
         top:32px;
         right:0;
     }
-    ${media(800)}{
+    ${media(900)}{
         width:100%;
     }
-    ${media(500)}{
+    ${media(700)}{
         font-size:30px;
     }
 `;
@@ -220,7 +223,7 @@ const Details = styled.div`
     display:flex;
     justify-content:space-between;
 	padding-bottom:50px;
-    ${media(800)}{
+    ${media(900)}{
         display:block;
     }
 `;
@@ -237,22 +240,21 @@ const StoryLine = styled.div`
 const Left = styled.div`
     padding-left:25px;
     width:45%;
-    ${media(800)}{
+    ${media(900)}{
         width:98%;
     }
 `;
     
 // background:rgb(255,220,88);
 const Right = styled.div`
-    padding-left:30px;
     color:rgba(0, 0, 0, 0.8);
     width:30%;
     background:#FFCC10;
-    ${media(800)}{
+    padding:30px 20px 50px 20px;
+    ${media(900)}{
         width:100%;
-        padding-top:2px;
         margin-top:50px;
-        padding-bottom:40px;
+        padding-left:20px;
     }
 `;
 
@@ -361,7 +363,7 @@ const FullCast = styled.div`
         box-shadow:0 0 5px rgba(0, 0, 0, 0.4);
         background:rgba(0, 0, 0, 0.8);
     }
-    ${media(800)}{
+    ${media(900)}{
         table{
             width:80vw;
             margin:50px auto;
@@ -384,11 +386,12 @@ const Movies = styled.div`
     flex-flow:row wrap;
     width:100%;
     justify-content:space-around;
-    gap:20px 0;
+    gap:20px 10px;
     a{
         border-radius:5px;
         display:block;
-        width:26%;
+        width:20%;
+        min-width:120px;
         position:relative;
         color:inherit !important;
         font-size:small;
@@ -519,6 +522,7 @@ const DialogCard = styled(Card)`
     z-index:10001;
 	width:100%;
     min-width:250px;
+    overflow:scroll !important;
 	background-color:rgba(40, 40, 40, 1) !important;
 	box-shadow:0 0 15px rgba(255, 255, 255, 0.1) !important;
 	border-radius:13px !important;
@@ -538,7 +542,7 @@ const Main = ({ movie, props }) =>{
 	const [isModal, setModal] = useState([false, -1]);
     return(
         <Parent>
-            <TopBox back={demonslayerwall}>
+            <TopBox back={movie.wall}>
                 <Content>
                     <Tooltip title="back">
                         <Button
@@ -549,10 +553,10 @@ const Main = ({ movie, props }) =>{
                         <MovieInfo>
                             <Desc>{movie.details}<br /><br />Genre: {movie.genres.map(g => <Genre>{g}</Genre>)}</Desc>
                             <P>Your Rating</P>
-                            <HoverRating user="asd" parentProps={{...props}} />
+                            <HoverRating title={movie.title} user="asd" parentProps={{...props}} />
                             <BigTitle>
                                 <Title>
-                                    <Released><span>Released on </span><span>16 October 2020</span></Released>
+                                    <Released><span>Released on </span><span>{movie.releasedOn}</span></Released>
                                     {movie.title.toUpperCase()}
                                 </Title>
                                 <MyButton
@@ -575,7 +579,7 @@ const Main = ({ movie, props }) =>{
                         <MovieCast>
                             <Director>
                                 <div>
-                                    <Img src={movie.director.img} />
+                                    <Avatar alt={movie.director.name} src={movie.director.img} />
                                 </div>
                                 <div>
                                     <span className="name">{movie.director.name}</span><br />
