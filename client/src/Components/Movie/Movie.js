@@ -554,7 +554,7 @@ const Main = ({ movie, props, rating }) =>{
                         <MovieInfo>
                             <Desc>{movie.details}<br /><br />Genre: {movie.genres.map(g => <Genre>{g}</Genre>)}</Desc>
                             <P>Your Rating</P>
-                            <HoverRating rating={rating} user="asd" parentProps={{...props}} />
+                            <HoverRating title={movie.title} rating={rating} parentProps={{...props}} />
                             <BigTitle>
                                 <Title>
                                     <Released><span>Released on </span><span>{movie.releasedOn}</span></Released>
@@ -827,21 +827,13 @@ const Movie = (props) =>{
                 props.history.goBack();
             } else {
                 setMovie(movie);
-                let isRated = false, userRating;
+                let userRating;
                 if(user.isCritic){
-                    isRated = movie.ratedBy.critics.forEach(ratings =>{
-                        if(ratings.user.user._id === user._id){
-                            userRating = ratings.rating;
-                        }
-                    })
+                    userRating = movie.ratedBy.critics.find(review => review.user === user._id);
                 } else {
-                    isRated = movie.ratedBy.users.forEach(ratings =>{
-                        if(ratings.user.user._id === user._id){
-                            userRating = ratings.rating;
-                        }
-                    })
+                    userRating = movie.ratedBy.users.find(review => review.user === user._id);
                 }
-                if(isRated) setRate(userRating);
+                if(userRating !== undefined) setRate(userRating.rating);
             }
         })
         .catch(err =>{

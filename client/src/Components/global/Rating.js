@@ -5,6 +5,8 @@ import Box from '@mui/material/Box';
 import StarIcon from '@mui/icons-material/Star';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
+import { useUser } from '../Contexts/User';
+import { Tooltip } from '@mui/material';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -69,9 +71,10 @@ const CanRate = styled.div`
     }
 `;
 
-const HoverRating = ({ title, parentProps, user, rating }) => {
+const HoverRating = ({ title, parentProps, rating }) => {
     const [value, setValue] = useState(rating);
     const [hover, setHover] = useState(-1);
+    const user = useUser();
     const { enqueueSnackbar } = useSnackbar();
     const login = () =>{
         enqueueSnackbar("Login First !", { variant: "warning" });
@@ -79,7 +82,7 @@ const HoverRating = ({ title, parentProps, user, rating }) => {
     }
     const Rate = () =>{
         setValue(hover);
-        axios.post('/rate', { value, title })
+        axios.post(`/movie/${title}/rate`, { rate: value, title })
         .then(res =>{
             if(res.status === 404){
                 enqueueSnackbar("Movie Not Found !", { variant : "error" });
@@ -94,16 +97,21 @@ const HoverRating = ({ title, parentProps, user, rating }) => {
     }
     return (
         <SBox
-            onClick={user === "" ? login : ""}
+            onClick={user === null || user === "" ? login : ""}
         >
             {user === "" ?
-                <Rating
-                    name="disabled"
-                    value={2}
-                    max={10}
-                    disabled
-                    emptyIcon={<StarIcon style={{"color":"black"}} />}
-                /> : 
+                (
+                    <Tooltip title="Please Login">
+                        <Rating
+                            name="disabled"
+                            value={10}
+                            max={10}
+                            disabled
+                            emptyIcon={<StarIcon style={{"color":"black"}} />}
+                        />
+                    </Tooltip>
+                )
+                 : 
                 <CanRate>
                     <span>
                         <Rating
