@@ -9,7 +9,6 @@ const movieSchema = new Schema({
     wall:String,
     criticScore:Number,
     details:String,
-    averageRating:Number,
     type:String,
     wiki:String,
     trailer:String,
@@ -18,6 +17,22 @@ const movieSchema = new Schema({
     storyline:String,
     runtime:String,
     origin:String,
+    averageRating:{
+        type: Number,
+        default:() => {
+            const rating = 0,
+            users = this.ratedBy.users,
+            critics = this.ratedBy.critics,
+            totalUsers = users.length + critics.length;
+            users.forEach((user) =>{
+                rating += user.rating;
+            })
+            critics.forEach((user) =>{
+                rating += user.rating;
+            })
+            return (rating / totalUsers).toPrecision(2);
+        }
+    },
     writer:{
         name:String,
         avatar:String
@@ -30,12 +45,18 @@ const movieSchema = new Schema({
     genres:[String],
     ratedBy:{
         users:[{
-            type:Schema.Types.ObjectId,
-            ref:'user'
+            rating:Number,
+            user:{
+                type:Schema.Types.ObjectId,
+                ref:'user'    
+            }
         }],
         critics:[{
-            type:Schema.Types.ObjectId,
-            ref:'user'
+            rating:Number,
+            user:{
+                type:Schema.Types.ObjectId,
+                ref:'user'    
+            }
         }]
     },
     cast:[{

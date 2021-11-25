@@ -16,6 +16,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import demonslayerwall from '../images/demonSlayerWall.png';
+import { useUser } from '../Contexts/User';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -538,7 +539,7 @@ const SDialog = styled(Dialog)`
     background:none !important;
 `;
 
-const Main = ({ movie, props }) =>{
+const Main = ({ movie, props, rating }) =>{
 	const [isModal, setModal] = useState([false, -1]);
     return(
         <Parent>
@@ -553,7 +554,7 @@ const Main = ({ movie, props }) =>{
                         <MovieInfo>
                             <Desc>{movie.details}<br /><br />Genre: {movie.genres.map(g => <Genre>{g}</Genre>)}</Desc>
                             <P>Your Rating</P>
-                            <HoverRating title={movie.title} user="asd" parentProps={{...props}} />
+                            <HoverRating rating={rating} user="asd" parentProps={{...props}} />
                             <BigTitle>
                                 <Title>
                                     <Released><span>Released on </span><span>{movie.releasedOn}</span></Released>
@@ -810,6 +811,8 @@ const Main = ({ movie, props }) =>{
 
 const Movie = (props) =>{
     const [movie, setMovie] = useState("");
+    const [rate, setRate] = useState(0);
+    const user = useUser();
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() =>{
         const { name } = props.match.params;
@@ -824,17 +827,33 @@ const Movie = (props) =>{
                 props.history.goBack();
             } else {
                 setMovie(movie);
+                let isRated = false, userRating;
+                if(user.isCritic){
+                    isRated = movie.ratedBy.critics.forEach(ratings =>{
+                        if(ratings.user.user._id === user._id){
+                            userRating = ratings.rating;
+                        }
+                    })
+                } else {
+                    isRated = movie.ratedBy.users.forEach(ratings =>{
+                        if(ratings.user.user._id === user._id){
+                            userRating = ratings.rating;
+                        }
+                    })
+                }
+                if(isRated) setRate(userRating);
             }
         })
         .catch(err =>{
             console.log(err);
-            enqueueSnackbar("Some error ocurred !", { variant : "error" });
+            enqueueSnackbar("Some error ocurred !", { variant : "error" }); 
             props.history.goBack();
         })
     }, [])
     return(
         (movie === "") ? (<Waiting open={true} />) : (
-            <Main 
+            <Main
+                rating={rate}
                 movie={movie}
                 props={props}
             />

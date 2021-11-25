@@ -69,8 +69,8 @@ const CanRate = styled.div`
     }
 `;
 
-const HoverRating = ({ title, parentProps, user }) => {
-    const [value, setValue] = useState(4);
+const HoverRating = ({ title, parentProps, user, rating }) => {
+    const [value, setValue] = useState(rating);
     const [hover, setHover] = useState(-1);
     const { enqueueSnackbar } = useSnackbar();
     const login = () =>{
@@ -80,7 +80,17 @@ const HoverRating = ({ title, parentProps, user }) => {
     const Rate = () =>{
         setValue(hover);
         axios.post('/rate', { value, title })
-        .then()
+        .then(res =>{
+            if(res.status === 404){
+                enqueueSnackbar("Movie Not Found !", { variant : "error" });
+                parentProps.history.push("/");
+            } else if(res.status === 502) {
+                enqueueSnackbar("502: Internal Server Error !", { variant : "error" });
+                parentProps.history.push("/");
+            } else {
+                enqueueSnackbar("Movie Rated Successfully", { variant : "success" });
+            }
+        })
     }
     return (
         <SBox
