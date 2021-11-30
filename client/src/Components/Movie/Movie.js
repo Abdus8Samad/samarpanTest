@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
+import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import styled from 'styled-components';
 import Waiting from '../global/Waiting';
@@ -127,7 +128,7 @@ const Img = styled.img`
     border-radius:50%;
 `;
 
-const Director = styled.div`
+export const UserTag = styled.div`
     display:flex;
     width:100%;
     div:nth-child(2){
@@ -475,6 +476,7 @@ const Cards = styled.div`
 	gap:25px 10px;
     margin: 0 20px;
     justify-content: space-around;
+    align-items:stretch;
 `;
 
 const Buttons = styled.div`
@@ -539,7 +541,7 @@ const SDialog = styled(Dialog)`
     background:none !important;
 `;
 
-const Main = ({ movie, props, rating }) =>{
+const Main = ({ movie, props, rating, setRating }) =>{
 	const [isModal, setModal] = useState([false, -1]);
     return(
         <Parent>
@@ -554,7 +556,7 @@ const Main = ({ movie, props, rating }) =>{
                         <MovieInfo>
                             <Desc>{movie.details}<br /><br />Genre: {movie.genres.map(g => <Genre>{g}</Genre>)}</Desc>
                             <P>Your Rating</P>
-                            <HoverRating title={movie.title} rating={rating} parentProps={{...props}} />
+                            <HoverRating setRating={setRating} title={movie.title} rating={rating} parentProps={{...props}} />
                             <BigTitle>
                                 <Title>
                                     <Released><span>Released on </span><span>{movie.releasedOn}</span></Released>
@@ -563,8 +565,8 @@ const Main = ({ movie, props, rating }) =>{
                                 <MyButton
                                     to={{ pathname: movie.trailer }}
                                     back="none"
-                                    color="white" 
-                                    border
+                                    color="white"
+                                    isborder="true"
                                     label='Watch Trailer'
                                     target="_blank"
                                 />
@@ -578,7 +580,7 @@ const Main = ({ movie, props, rating }) =>{
                             </BigTitle>
                         </MovieInfo>
                         <MovieCast>
-                            <Director>
+                            <UserTag>
                                 <div>
                                     <Avatar alt={movie.director.name} src={movie.director.img} />
                                 </div>
@@ -586,13 +588,13 @@ const Main = ({ movie, props, rating }) =>{
                                     <span className="name">{movie.director.name}</span><br />
                                     <span className="dir">The Director</span>
                                 </div>
-                            </Director>
+                            </UserTag>
                             <P>Main Cast</P>
                             <Cast>
                                 {
                                     movie.cast.slice(0, 4).map((char, index) =>{
                                         return(
-                                            <Character key={index} to={{ pathname: char.wiki }} target="_blank">
+                                            <Character key={uuidv4()} to={{ pathname: char.wiki }} target="_blank">
                                                 <img src={char.profilePic} alt="cast" /><br />
                                                 {char.name}<br />
                                                 <span>as {char.role}</span>
@@ -626,7 +628,7 @@ const Main = ({ movie, props, rating }) =>{
 							{
 								movie.cast.slice(0, 4).map((char, index) =>{
 									return(
-										<Link key={index} to={{ pathname: char.wiki }} target="_blank">
+										<Link key={uuidv4()} to={{ pathname: char.wiki }} target="_blank">
 											{char.name}, 
 										</Link>
 									)
@@ -655,7 +657,7 @@ const Main = ({ movie, props, rating }) =>{
                                 {
                                     movie.cast.map((char, index) =>{
                                         return(
-                                            <Link to={{pathname: char.wiki}} target="_blank" key={index}>
+                                            <Link to={{pathname: char.wiki}} target="_blank" key={uuidv4()}>
                                                 <tr>
                                                     <td className="avatar">
                                                         <Avatar alt={char.name} src={char.profilePic} />
@@ -691,7 +693,7 @@ const Main = ({ movie, props, rating }) =>{
                             {
                                 dummyData.map((likeMovie, index) =>{
                                     return(
-                                        <Link to={`/movie/${likeMovie.title}`} key={index}>
+                                        <Link to={`/movie/${likeMovie.title}`} key={uuidv4()}>
                                             <img src={likeMovie.src} alt={likeMovie.title} /><br />
                                             <span>{likeMovie.title}</span>
                                         </Link>
@@ -714,11 +716,11 @@ const Main = ({ movie, props, rating }) =>{
                                     ((i % 3) ? r[r.length - 1].push(e) : r.push([e])) && r
                                 )
                             }, [])).map((group, index) =>
-                                <Cards key={index}>
+                                <Cards key={uuidv4()}>
                                     {
                                         group.map((review, index) =>
                                             <>
-                                                <SCard onClick={() => setModal([true, movie.reviews.indexOf(review)])} key={movie.reviews.indexOf(review)}>
+                                                <SCard onClick={() => setModal([true, movie.reviews.indexOf(review)])} key={uuidv4()}>
                                                     <CardHeader
                                                         avatar={
                                                             <Avatar alt="avatar" src={review.avatar} />
@@ -800,8 +802,8 @@ const Main = ({ movie, props, rating }) =>{
                         }
                     </MainCard>
                     <Buttons className="button">
-                        <label for="one" className="active one"></label>
-                        <label for="two" className="two"></label>
+                        <label htmlFor="one" className="active one"></label>
+                        <label htmlFor="two" className="two"></label>
                     </Buttons>
                 </Container>
             </Reviews>
@@ -820,11 +822,11 @@ const Movie = (props) =>{
         .then(res =>{
             const { status, movie } = res.data;
             if(status === 404){
-                enqueueSnackbar("Movie not found !", { variant : "error" });
-                props.history.goBack();
-            } else if(status === 500){
-                enqueueSnackbar("Internal server error !", { variant : "error" });
-                props.history.goBack();
+                return enqueueSnackbar("Movie not found !", { variant : "error" });
+                // props.history.push('/');
+            // } else if(status === 500){
+            //     return enqueueSnackbar("Internal server error !", { variant : "error" });
+            //     // props.history.push('/');
             } else {
                 setMovie(movie);
                 let userRating;
@@ -833,6 +835,7 @@ const Movie = (props) =>{
                 } else {
                     userRating = movie.ratedBy.users.find(review => review.user === user._id);
                 }
+                console.log(userRating);
                 if(userRating !== undefined) setRate(userRating.rating);
             }
         })
@@ -846,6 +849,7 @@ const Movie = (props) =>{
         (movie === "") ? (<Waiting open={true} />) : (
             <Main
                 rating={rate}
+                setRating={(r) => setRate(r)}
                 movie={movie}
                 props={props}
             />

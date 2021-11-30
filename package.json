@@ -47,7 +47,8 @@
     "passport-local-mongoose": "^6.1.0",
     "path": "^0.12.7",
     "react": "0.14.0",
-    "react-dom": "0.0.0-experimental-bdd6d5064-20211001"
+    "react-dom": "0.0.0-experimental-bdd6d5064-20211001",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@parcel/transformer-image": "^2.0.0",

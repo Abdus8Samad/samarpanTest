@@ -1,4 +1,8 @@
 /* ------------ Scrollbar Mobile Version Fix ------------ */
+
+// ::-webkit-scrollbar-button {
+// 	height: 40px; //for vertical scrollbar
+// }
 /* !important is needed sometimes */
 ::-webkit-scrollbar {
 	width: 12px !important;

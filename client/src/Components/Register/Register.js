@@ -55,8 +55,11 @@ const FormBox = styled.div`
     *:not(a){
         color:rgba(255, 255, 255, 0.8) !important;
     }
-    .MuiInput-root.MuiInput-underline{
-        border-bottom:1px solid rgba(255, 255, 255, 0.8) !important;
+    .MuiInput-underline:before{
+        border-bottom:1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    .MuiInput-underline:after{
+        border-bottom:1px solid rgba(255, 255, 255, 0.85) !important;
     }
     span.filename{
         display:inline-block;

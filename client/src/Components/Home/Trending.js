@@ -86,7 +86,10 @@ const Parent = styled.div`
 const Trending = () =>{
     const [movies, setMovies] = useState(dummyData);
     useEffect(() =>{
-        setTimeout(() => setMovies(Data), 6000);
+        let simulateLoading = setTimeout(() => setMovies(Data), 4000);
+        return () =>{
+            clearTimeout(simulateLoading);
+        }
     }, [])
     return(
         <Parent>

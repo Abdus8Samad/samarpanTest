@@ -190,7 +190,7 @@ const Home = () =>{
                     <p className="desc">{desc}</p>
                 </Overview>
                 <ButtonGroup>
-                    <MyButton to='/avengers/rate' back="none" color="white" size="25vw" border label='Rate Now' />
+                    <MyButton to='/avengers/rate' back="none" color="white" size="25vw" isborder="true" label='Rate Now' />
                     <MyButton to={`/movie/${title}`} back="black" color="white" size="25vw" label='More Info' />
                 </ButtonGroup>
                 <Score scoreColor={ScoreLevel(score)}>

@@ -13,7 +13,7 @@ export const LoadingProvider = ({children}) =>{
     });
     return(
         <LoadingContext.Provider value={loading}>
-            <SetLoadingContext.Provider value={setLoading}>
+            <SetLoadingContext.Provider value={(e, val) => setLoading(e, val)}>
                 {children}
             </SetLoadingContext.Provider>
         </LoadingContext.Provider>

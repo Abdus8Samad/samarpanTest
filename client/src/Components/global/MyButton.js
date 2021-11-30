@@ -3,22 +3,34 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-const Parent = styled(Link)`
+const styles = (props) =>
+`
 	padding:15px;
 	text-align:center;
-	background:${props => props.back};
-	color:${props => props.color};
-	border:${props => props.border ? "0.1em solid " + props.color : ""};
+	background:${props.back};
+	color:${props.color};
+	border:${props.isborder ? "0.1em solid " + props.color : ""};
 	font-size:100%;
 	transition:all 0.2s ease;
 	opacity:0.8;
-	width:${props => props.size}};
+	width:${props.size};
 	&:hover{
 		opacity:1;
+		cursor:pointer;
 	}
-	${props => props.sx}
+	${props.sx}
 `;
 
-const MyButton = (props) => <Parent {...props}>{props.label}</Parent>
+const Button = styled.div`${props => styles(props)}`;
+const LinkButton = styled(Link)`${props => styles(props)}`;
 
+const MyButton = (props) =>{
+	return(
+		(props.button === true) ? (
+			<Button {...props}>{props.label}</Button>
+		) : (
+			<LinkButton {...props}>{props.label}</LinkButton>
+		)
+	)
+}
 export default MyButton;

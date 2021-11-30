@@ -6,7 +6,7 @@ import { useSetUser, useUser } from "../Contexts/User";
 import { useSnackbar } from "notistack";
 import timeSince from "../utils/TimeSince";
 import { ResolveLevel } from "../utils/ResolveLevel";
-import { Tooltip } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -34,13 +34,9 @@ export const Back = styled.div`
     background-attachment:fixed;
 `;
 
-const Avatar = styled.div`
+const SAvatar = styled(Avatar)`
     position:relative;
     margin:20px auto;
-    width:23vw;
-    height:23vw;
-    min-width:120px;
-    border-radius:50%;
     &::after{
         content:'';
         width:100%;
@@ -157,7 +153,7 @@ const Achievments = styled.div`
     margin-top:8rem;
     div{
         text-align:center;
-        padding:0 6%;
+        padding:0 3.5%;
     }
     ${media(600)}{
         font-size:smaller;
@@ -334,10 +330,11 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
             <Container className="container">
                 <Details>
                     <div>
-                        <Avatar
+                        <SAvatar
                             personal={personal}
                             onClick={() => uploadAvatar()}
                             className="avatar"
+                            sx={{width:"23vw", height:"23vw"}}
                             // style={{background:`#313131 url(${profile.avatar}) no-repeat fixed top center`}}
                         >
                             <CameraAltOutlinedIcon />
@@ -351,7 +348,7 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
                                 title="Please upload only images"
                                 hidden
                             />
-                        </Avatar>
+                        </SAvatar>
                     </div>
                     <About>
                         <p className="name">{profile.username}<span className="lev">({ResolveLevel(profile.score)[0]})</span></p>
