@@ -184,7 +184,7 @@ const Home = () =>{
     const MovieWrapper = ({rating, ratedBy, score, src, desc, title}) =>{
         return(
             <Movie>
-                <Poster src={src} alt="AVEGERS" />
+                <Poster src={src} alt={title} />
                 <Overview>
                     <Title>{title}</Title>
                     <p className="desc">{desc}</p>
@@ -221,7 +221,7 @@ const Home = () =>{
         return(
             <Parent className="Home">
                 <TopMovies>
-                    <Carousel autoPlay infiniteLoop interval="8000" showThumbs={false}>
+                    <Carousel autoPlay infiniteLoop interval="6500" showThumbs={false}>
                         <MovieWrapper
                             desc={"After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."}
                             title={"Avengers"}
@@ -269,12 +269,9 @@ const Home = () =>{
             setLucifer(luciferPoster);
         }
     }
-    useEffect(() =>{
-        sizeChange();
-    }, [])
     useLayoutEffect(() =>{
-        window.addEventListener('resize', sizeChange);
         sizeChange();
+        window.addEventListener('resize', sizeChange);
         return () => window.removeEventListener('resize', sizeChange);
     }, []);
     return(

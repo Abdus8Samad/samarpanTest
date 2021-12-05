@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
 import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
@@ -79,7 +80,7 @@ const Movies = (props) =>{
         <Parent>
             {props.payload.map((movie, index) =>{
                 return(
-                    <Paper to={"/movie/" + movie.title} className="scrollEffect" key={index}>
+                    <Paper to={"/movie/" + movie.title} className="scrollEffect" key={uuidv4()}>
                         {props.payload[0].state === "dummy" ? (
                             <ImagePlaceholder width={100}/>
                         ) : (<Poster src={movie.src} />)}

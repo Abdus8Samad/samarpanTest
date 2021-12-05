@@ -46,8 +46,10 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^6.1.0",
     "path": "^0.12.7",
-    "react": "0.14.0",
+    "react-collapse": "^5.1.1",
     "react-dom": "0.0.0-experimental-bdd6d5064-20211001",
+    "react-motion": "^0.5.2",
+    "react-text-collapse": "^0.6.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

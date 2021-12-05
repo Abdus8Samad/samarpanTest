@@ -1,3 +1,4 @@
+import { Avatar } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -70,36 +71,17 @@ const Links = styled(Link)`
             width:90%;
         }
     }
-    &.user:hover img{
-        top:-2px;
-    }
     ${media(350)}{
         font-size:80% !important;
     }
 `;
-
-const UserImg = styled.img`
-    width:40px;
-    height:40px;
-    min-width:20px;
-    border-radius:50%;
-    vertical-align:middle;
-    position:relative;
-    transition:all 0.15s ease-out;
-    top:0;
-    ${media(500)}{
-        width:42px;
-    }
-    ${media(380)}{
-        width:30px;
+    
+const SAvatar = styled(Avatar)`
+    transition:all 0.1s ease-in;
+    &:hover{
+        opacity:0.8;
     }
 `;
-    
-// const Logo = styled(Link)`
-//     font-size:30px;
-//     color:white !important;
-//     vertical-align:center;
-// `;
 
 const TopBar = () =>{
     const User = useUser();
@@ -111,7 +93,7 @@ const TopBar = () =>{
                 {/* <Logo to='/' className="logo">Samarpan&trade;</Logo> */}
                 <Links to='/Anime'>Anime</Links>
                 <Links to='/Series'>Series</Links>
-                <Links to={(User === "") ? "/login" : `/profile/${User.username}`} className="user"><UserImg src={(User !== "") ? (User.avatar) : ("https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png")} /></Links>
+                <Links to={(User === "") ? "/login" : `/profile/${User.username}`} className="user"><SAvatar src={(User !== "") ? (User.avatar) : ("https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png")} /></Links>
             </List>
         </Parent>
     )

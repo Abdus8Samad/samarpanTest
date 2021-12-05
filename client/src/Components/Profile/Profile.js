@@ -306,7 +306,7 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
                     if(status !== 200){
                         console.log(res.data.msg);
                     } else {
-                        setProfile({...profile, avatar: reader.result });
+                        profile.avatar = reader.result;
                         setUser(profile);
                         enqueueSnackbar("Updated Avatar Successfully !", { variant : "success" });
                     }

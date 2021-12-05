@@ -48,15 +48,15 @@ html, body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-div.background {
-	position:fixed;
-	width:100vw;
-	height:100vh;
-	z-index:-1000;
-	left:0;
-	top:0;
-	background:rgba(18, 18, 18, 0);
-}
+// div.background {
+// 	position:fixed;
+// 	width:100vw;
+// 	height:100vh;
+// 	z-index:-1000;
+// 	left:0;
+// 	top:0;
+// 	background:rgba(18, 18, 18, 0);
+// }
 
 code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;

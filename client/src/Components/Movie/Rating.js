@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Rating from '@mui/material/Rating';
 import Box from '@mui/material/Box';
@@ -6,9 +6,9 @@ import StarIcon from '@mui/icons-material/Star';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
 import { useUser } from '../Contexts/User';
-import { Avatar, Dialog, DialogContent, DialogTitle, TextField, Tooltip } from '@mui/material';
-import { UserTag } from '../Movie/Movie';
-import MyButton from './MyButton';
+import { Avatar, Dialog, DialogContent, DialogTitle, TextField, Tooltip, Typography } from '@mui/material';
+import { UserTag } from './Movie';
+import MyButton from '../global/MyButton';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -54,10 +54,12 @@ const SBox = styled(Box)`
 
 const RateContainer = styled.div`
     width:90%;
-    margin:auto;
-    font-size:30px;
+    margin:25px auto;
     span.rateText{
         margin-left:10px;
+    }
+    *{
+        font-size:30px !important;
     }
     &:hover{
         cursor:pointer;
@@ -72,9 +74,6 @@ const RateContainer = styled.div`
         span.rateText{
             margin:50px auto 0 auto;
         }
-        *{
-            font-size:35px !important;
-        }
     }
     ${media(700)}{
         *{
@@ -83,7 +82,7 @@ const RateContainer = styled.div`
     }
 `;
 
-const STextField = styled(TextField)`
+const STextField = styled.div`
     .MuiFilledInput-root:after{
         border-bottom:1px solid white !important;
     }
@@ -97,35 +96,73 @@ const ReviewIt = styled.p`
     margin:0;
 `;
 
-const HoverRating = ({ title, parentProps, rating, setRating }) => {
-    const [value, setValue] = useState(rating);
+const HoverRating = ({ movie, title, parentProps }) => {
     const [hover, setHover] = useState(-1);
     const [reviewDialog, setReviewDialog] = useState(false);
+    const [rating, setRating] = useState(0);
     const [review, setReview] = useState("");
     const user = useUser();
     const { enqueueSnackbar } = useSnackbar();
     const login = () =>{
-        enqueueSnackbar("Login First !", { variant: "warning" });
+        enqueueSnackbar("401: Please Login First !", { variant: "warning" });
         parentProps.history.push("/login");
     }
-    const Rate = () =>{
-        setValue(hover);
-        axios.post(`/movie/${title}/rate`, { rate: value, title })
+    const Rate = (rate) =>{
+        axios.post(`/movie/${title}/rate`, { rate })
         .then(res =>{
-            const newRating = value;
-            if(res.status === 404){
+            const { status } = res.data;
+            if(status === 404){
                 enqueueSnackbar("Movie Not Found !", { variant : "error" });
-                parentProps.history.push("/");
-            } else if(res.status === 502) {
+                parentProps.history.goBack();
+            } else if(status === 401) {
+                enqueueSnackbar('401: Please Login First !', { variant: "warning" });
+                parentProps.history.push("/login");
+            } else if(status === 502) {
                 enqueueSnackbar("502: Internal Server Error !", { variant : "error" });
-                parentProps.history.push("/");
             } else {
                 enqueueSnackbar("Movie Rated Successfully", { variant : "success" });
+                let reviewed = movie.reviews.find(review => review.author === user.username);
+                if(reviewed !== undefined){
+                    setReview(reviewed.body);
+                }
                 setReviewDialog(true);
-                setRating(newRating);
+            }
+        })
+        .catch(err =>{
+            console.log(err);
+            if(err.response){
+                enqueueSnackbar(`${err.response.status} Server Not Responding !`, { variant : "error" });
             }
         })
     }
+    const Review = () =>{
+        axios.post(`/movie/${title}/review`, { review })
+        .then(res =>{
+            const { status } = res.data;
+            if(status === 404){
+                enqueueSnackbar("Movie Not Found !", { variant : "error" });
+                parentProps.history.goBack();
+            } else if(status === 502) {
+                enqueueSnackbar("502: Internal Server Error !", { variant : "error" });
+            } else {
+                setReviewDialog(false);
+                enqueueSnackbar("Review Added Successfully !", { variant : 'success' });
+            }
+        })
+        .catch(err =>{
+            console.log(err);
+            enqueueSnackbar(`${err.statusCode}: Internal Server Error`, { variant : 'error' });
+        })
+    }
+    useEffect(() =>{
+        let userRating;
+        if(user.isCritic){
+            userRating = movie.ratedBy.critics.find(review => review.user === user._id);
+        } else {
+            userRating = movie.ratedBy.users.find(review => review.user === user._id);
+        }
+        if(userRating !== undefined) setRating(userRating.rating);
+    }, [])
     return (
         <Parent className="rating">
             <Dialog
@@ -159,33 +196,37 @@ const HoverRating = ({ title, parentProps, rating, setRating }) => {
                             <span className="dir" style={{"fontSize":"10px", "opacity":"0.75"}}>rated {rating} stars</span>
                         </div>
                     </UserTag>
-                    <STextField
-                        id="filled-multiline-flexible"
-                        label="Write Here"
-                        multiline
-                        maxRows={6}
-                        value={review}
-                        fullWidth
-                        onChange={(e, val) => setReview(val)}
-                        variant="filled"
-                    />
+                    <STextField>
+                        <TextField
+                            id="filled-multiline-flexible"
+                            label="Write Here"
+                            multiline
+                            maxRows={6}
+                            value={review}
+                            fullWidth
+                            variant="filled"
+                            onChange={(e) => setReview(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </STextField>
                     <MyButton
-                        to=""
                         button={true}
                         back="none"
-                        color="white" 
+                        color="white"
                         label='Review it'
                         size="20vw"
-                        target="_blank"
                         sx={`
                             margin:auto;
                         `}
                         isborder="true"
+                        onClick={() => Review()}
                     />
                 </DialogContent>
             </Dialog>
             <SBox
-                onClick={user === null || user === "" ? login : ""}
+                onClick={user === null || user === "" ? login : null}
             >
                 {user === "" ?
                     (
@@ -203,21 +244,26 @@ const HoverRating = ({ title, parentProps, rating, setRating }) => {
                     )
                     : 
                     (
-                        <RateContainer className="canRate">
+                        <RateContainer>
                             <span>
+                                <Typography component="legend">{labels[hover !== -1 ? hover : rating]}</Typography>
                                 <Rating
+                                    className="ratingWala"
                                     name="hover-feedback"
-                                    value={value}
+                                    value={rating}
                                     max={10}
                                     precision={0.5}
+                                    onChange={(event, newValue) =>{
+                                        setRating(newValue);
+                                        Rate(newValue);
+                                    }}
                                     onChangeActive={(event, newHover) => {
                                         setHover(newHover);
                                     }}
-                                    onClick={() => Rate()}
                                     emptyIcon={<StarIcon style={{"color":"rgba(255, 255, 255, 0.3)"}} />}
                                 />
                             </span>
-                            <span className="rateText">{labels[hover !== -1 ? hover : value]}</span>
+                            {/* <span className="rateText">{labels[hover !== -1 ? hover : value]}</span> */}
                         </RateContainer>
                     )
                 }

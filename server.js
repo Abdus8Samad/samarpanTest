@@ -151,11 +151,11 @@ const demonSlayer = {
 const Movie = require('./models/movie');
 // const kunal = require('./kunal');
 // const vans = require('./vans');
-// Movie.create(demonSlayer)
-// .then(movie =>{
-//     console.log(movie);
-// })
-// .catch(err => console.log(err));
+Movie.create(demonSlayer)
+.then(movie =>{
+    console.log(movie);
+})
+.catch(err => console.log(err));
 //Routes
 const authRoutes = require('./routes/auth'),
 profileRoutes = require("./routes/profile"),

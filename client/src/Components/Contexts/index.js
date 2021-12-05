@@ -6,11 +6,11 @@ import { LoadingProvider } from "./LoadingState";
 const ContextsProvider = ({children}) =>{
     return(
         <UserProvider>
-            <SnackbarProvider>
-                <LoadingProvider>
+            <LoadingProvider>
+                <SnackbarProvider>
                     {children}
-                </LoadingProvider>
-            </SnackbarProvider>
+                </SnackbarProvider>
+            </LoadingProvider>
         </UserProvider>
     )
 }

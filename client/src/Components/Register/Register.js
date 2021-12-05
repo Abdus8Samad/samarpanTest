@@ -73,9 +73,9 @@ const FormBox = styled.div`
 `;
 
 const MyButton = styled.input`
-    padding:10px;
+    padding:10px 25px;
     text-align:center;
-    font-size:2vw;
+    font-size:2em;
     opacity:0.85;
     transition:all 0.2s ease;
     border:2px solid white;
@@ -115,7 +115,7 @@ const LoggedIn = () =>{
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() =>{
         enqueueSnackbar("Already Logged In !", { variant : "warning" });
-    })
+    }, [])
     return(
         <Redirect to='/' />
     )
@@ -221,7 +221,7 @@ const Main = ({props}) =>{
                             ),
                         }}
                         inputProps={{
-                            maxlength:20
+                            maxLength:20
                         }}
                     />
                     <TextField

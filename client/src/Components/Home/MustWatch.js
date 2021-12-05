@@ -98,7 +98,7 @@ const MustWatch = () =>{
         return () =>{
             clearTimeout(simulateLoading);
         }
-    }, [movies])
+    }, [])
     return(
         <Parent>
             <SmallHeading text="Must Watch" /><br /><br />

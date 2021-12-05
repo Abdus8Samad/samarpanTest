@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
+import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
 import { useSetUser, useUser } from '../Contexts/User';
@@ -65,9 +65,9 @@ const FormBox = styled.div`
 `;
 
 const Button = styled.input`
-    padding:10px;
+    padding:10px 25px;
     text-align:center;
-    font-size:2vw;
+    font-size:1.8em;
     opacity:0.85;
     transition:all 0.2s ease;
     border:2px solid white;
@@ -103,7 +103,7 @@ const Bottom = styled.p`
     }
 `;
 
-const Main = ({props, setLogged}) =>{
+const Main = ({ props }) =>{
     const { enqueueSnackbar } = useSnackbar();
     const [values, setValues] = useState({
         username: '',
@@ -136,10 +136,9 @@ const Main = ({props, setLogged}) =>{
                 enqueueSnackbar(`${status} Internal Server Error !`, { variant : "error" });
                 setValues({...values, submit:false});
             } else {
-                setLogged();
-                setUser(user);
                 enqueueSnackbar(`Welcome ${user.username} !`, { variant : "success" });
                 props.history.goBack();
+                setUser(user);
             }
         })
         .catch(err =>{
@@ -182,7 +181,7 @@ const Main = ({props, setLogged}) =>{
                             ),
                         }}
                         inputProps={{
-                            maxlength:20
+                            maxLength:20
                         }}
                     />
                     <FormControl sx={{"margin":"35px 0", "width":"100%"}} variant="standard" color="secondary">
@@ -224,7 +223,19 @@ const Main = ({props, setLogged}) =>{
                     </Bottom>
                 </FormBox>
             </Form>
-            <Waiting open={values.submit} />
+            <Backdrop
+                sx={{
+                    color:"#fff",
+                    position:"fixed",
+                    top:0,
+                    left:0,
+                    width:"100vw",
+                    height:"100vh"
+                }}
+                open={values.submit}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </Parent>
     )
 }
@@ -233,7 +244,7 @@ const LoggedIn = () =>{
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() =>{
         enqueueSnackbar("Already Logged In !", { variant : "warning" });
-    })
+    }, []);
     return(
         <Redirect to='/' />
     )
@@ -242,13 +253,9 @@ const LoggedIn = () =>{
 const Login = (props) =>{
     const User = useUser();
     const Loading = useLoading();
-    const [justLoggedIn, setJustLogged] = useState(false);
-    useEffect(() =>{
-        console.log(justLoggedIn);
-    })
     return(
         (!Loading.user) ? (<Waiting open={true} />) : (
-            (User !== "" && !justLoggedIn) ? (<LoggedIn />) : (<Main props={props} setLogged={() => setJustLogged(true)} />)
+            (User !== "") ? (<LoggedIn />) : (<Main props={props} />)
         )
     )
 }

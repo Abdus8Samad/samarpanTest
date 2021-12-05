@@ -78,28 +78,23 @@ const App = (props) => {
         }
     }, []);
     const MyRoute = (attr) =>{
-        return(
-            <Route {...attr}>
-                {() =>{
-                        if(attr.path.substr(0, 8) === "/profile" || attr.path.substr(0, 6) === "/movie"){
-                            if(attr.path.substr(0, 6) === "/movie") setFooter(true);
-                            setRemoveTopbar(true);
-                        } else {
-                            setRemoveTopbar(false);
-                            setFooter(false);
-                            if(attr.path === "/login" || attr.path === "/register"){
-                                setRemoveTopbar(true);
-                            } else {
-                                setRemoveTopbar(false);
-                                setFooter(false);
-                            }
-                        }
-                        setTopTitle(attr.title);
-                        return attr.component;
-                    }
+        useEffect(() =>{
+            if(attr.path.substr(0, 8) === "/profile" || attr.path.substr(0, 6) === "/movie"){
+                if(attr.path.substr(0, 6) === "/movie") setFooter(true);
+                setRemoveTopbar(true);
+            } else {
+                setRemoveTopbar(false);
+                setFooter(false);
+                if(attr.path === "/login" || attr.path === "/register"){
+                    setRemoveTopbar(true);
+                } else {
+                    setRemoveTopbar(false);
+                    setFooter(false);
                 }
-            </Route>
-        )
+            }
+            setTopTitle(attr.title);
+        }, []);
+        return <Route exact path={attr.path} title={attr.title} component={attr.component} />;
     }
     const scrollTop = () =>{
         window.scrollTo({
@@ -112,13 +107,13 @@ const App = (props) => {
             <Helmet><title>{topTitle} - Samarpan</title></Helmet>
             <MainBody>
                 <Switch>
-                    <MyRoute exact path="/login" title="Login" component={<Login />} />
-                    <MyRoute exact path="/register" title="SignUp" component={<Register />} />
-                    <MyRoute exact path="/profile/:name" title="Profile" component={<Profile />} />
-                    <MyRoute exact path="/movie/:name" title="Movie" component={<Movie />} />
-                    <MyRoute exact path="/profile" title="Profile" component={<Profile />} />
-                    <MyRoute exact path="/test" title="Test" component={<Test />} />
-                    <MyRoute exact path="*" title="Home" component={<Home />} />
+                    <MyRoute exact path="/test" title="Test" component={Test} />
+                    <MyRoute exact path="/login" title="Login" component={Login} />
+                    <MyRoute exact path="/register" title="SignUp" component={Register} />
+                    <MyRoute exact path="/profile" title="Profile" component={Profile} />
+                    <MyRoute exact path="/profile/:name" title="Profile" component={Profile} />
+                    <MyRoute exact path="/movie/:name" title="Movie" component={Movie} />
+                    <MyRoute exact path="*" title="Home" component={Home} />
                 </Switch>
             </MainBody>
             <ScrollToTop onClick={() => scrollTop()} className="scrollToTop" ><ExpandLessRoundedIcon /></ScrollToTop>

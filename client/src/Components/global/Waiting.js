@@ -23,11 +23,11 @@ const SBackdrop = styled(Backdrop)`
 
 const Waiting = ({ open }) =>{
     return(
-        <SBackdrop
+        <Backdrop
             open={open}
         >
             <CircularProgress color="inherit" />
-        </SBackdrop>
+        </Backdrop>
     )
 }
 export default Waiting;
