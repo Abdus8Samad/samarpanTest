@@ -8,7 +8,7 @@ cors = require('cors'),
 expressSession = require('express-session'),
 cookieParser = require('cookie-parser'),
 localAuth = require('./auth/localauth'),
-PORT = process.env.PORT || 8080,
+PORT = process.env.PORT || 10005,
 passport = require('passport');
 require('dotenv/config');
 connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -35,7 +35,7 @@ app.use(expressSession({
     saveUninitialized: false,
     cookie: {
         sameSite: "strict",
-        httpOnly: true
+        httpOnly: false
     }
 }));
 app.use(cookieParser());
@@ -151,11 +151,12 @@ const demonSlayer = {
 const Movie = require('./models/movie');
 // const kunal = require('./kunal');
 // const vans = require('./vans');
-Movie.create(demonSlayer)
-.then(movie =>{
-    console.log(movie);
-})
-.catch(err => console.log(err));
+// const ravi = require('./ravi');
+// Movie.create(demonSlayer)
+// .then(movie =>{
+//     console.log(movie);
+// })
+// .catch(err => console.log(err));
 //Routes
 const authRoutes = require('./routes/auth'),
 profileRoutes = require("./routes/profile"),

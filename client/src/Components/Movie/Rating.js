@@ -155,13 +155,15 @@ const HoverRating = ({ movie, title, parentProps }) => {
         })
     }
     useEffect(() =>{
-        let userRating;
-        if(user.isCritic){
-            userRating = movie.ratedBy.critics.find(review => review.user === user._id);
-        } else {
-            userRating = movie.ratedBy.users.find(review => review.user === user._id);
+        if(user !== ""){
+            let userRating;
+            if(user.isCritic){
+                userRating = movie.ratedBy.critics.find(review => review.user.toString() === user._id.toString());
+            } else {
+                userRating = movie.ratedBy.users.find(review => review.user.toString() === user._id.toString());
+            }
+            if(userRating !== undefined) setRating(userRating.rating);
         }
-        if(userRating !== undefined) setRating(userRating.rating);
     }, [])
     return (
         <Parent className="rating">

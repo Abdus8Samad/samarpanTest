@@ -88,11 +88,11 @@ const TopBar = () =>{
     return(
         <Parent>
             <List>
-                <Links to='/Categories'>Categories</Links>
-                <Links to='/Movies'>Movies</Links>
+                <Links to='#' onClick={""}>Categories</Links>
+                <Links to='/categories/movies'>Movies</Links>
                 {/* <Logo to='/' className="logo">Samarpan&trade;</Logo> */}
-                <Links to='/Anime'>Anime</Links>
-                <Links to='/Series'>Series</Links>
+                <Links to='/categories/animation'>Animation</Links>
+                <Links to='/categories/series'>Series</Links>
                 <Links to={(User === "") ? "/login" : `/profile/${User.username}`} className="user"><SAvatar src={(User !== "") ? (User.avatar) : ("https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png")} /></Links>
             </List>
         </Parent>

@@ -218,7 +218,7 @@ const Reviews = ({ parentProps, movie }) =>{
         event.preventDefault();
         const newValue = event.target.value;
         setOrderBy(newValue);
-        setReviews(reviews.sort(Sortings[newValue]).load);
+        setReviews(reviews.sort(Sortings[newValue].load));
     }
     const Review = () =>{
         axios.post(`/movie/${movie.title}/review`, { review })

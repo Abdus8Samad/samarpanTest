@@ -187,6 +187,16 @@ const Genre = styled.span`
     background:#FFCC10;
 `;
 
+const UserIcon = styled(Link)`
+    display:block;
+    float:right;
+    margin:10px;
+    transition:all 0.1 ease-in;
+    &:hover{
+        opacity:0.8;
+    }
+`;
+
 // const Img = styled.img`
 //     width:40px;
 //     height:40px;
@@ -194,14 +204,16 @@ const Genre = styled.span`
 // `;
 
 const TopBox = ({ movie, parentProps }) =>{
+    const User = useUser();
     return(
         <Parent back={movie.wall}>
         <Content>
-            <Tooltip title="back">
+            <Tooltip title="back" sx={{float: 'left', display: 'block'}}>
                 <Button
                     onMouseDown={() => parentProps.history.goBack()}
                 ><ArrowBackIcon /></Button>
             </Tooltip>
+            <UserIcon to={(User === "") ? "/login" : `/profile/${User.username}`} className="user"><Avatar src={(User !== "") ? (User.avatar) : ("https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png")} /></UserIcon>
             <MainContent>
                 <MovieInfo>
                     <Desc>{movie.details}<br /><br />Genre: {movie.genres.map(g => <Genre key={uuidv4()}>{g}</Genre>)}</Desc>

@@ -69,7 +69,7 @@ const Data = [
         rating:9
     },
     {
-        title:"Attack On Titan",
+        title:"Attack on Titan",
         src:"https://m.media-amazon.com/images/I/81dH7-pkjiL._SL1500_.jpg",
         link:"/aot",
         genre:"Action",
@@ -99,13 +99,14 @@ const Parent = styled.div`
 `;
 
 const TopRated = () =>{
-    const [movies, setMovies] = useState(dummyData);
-    useEffect(() =>{
-        let simulateLoading = setTimeout(() => setMovies(Data), 4000);
-        return () =>{
-            clearTimeout(simulateLoading);
-        }
-    }, [])
+    const [movies, setMovies] = useState(Data);
+    // const [movies, setMovies] = useState(dummyData);
+    // useEffect(() =>{
+    //     let simulateLoading = setTimeout(() => setMovies(Data), 4000);
+    //     return () =>{
+    //         clearTimeout(simulateLoading);
+    //     }
+    // }, [])
     return(
         <Parent>
             <SmallHeading text="Top Rated" /><br /><br />

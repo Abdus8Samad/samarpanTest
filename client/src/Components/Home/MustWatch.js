@@ -92,13 +92,14 @@ const Parent = styled.div`
 
 
 const MustWatch = () =>{
-    const [movies, setMovies] = useState(dummyData);
-    useEffect(() =>{
-        let simulateLoading = setTimeout(() => setMovies(Data), 4000);
-        return () =>{
-            clearTimeout(simulateLoading);
-        }
-    }, [])
+    const [movies, setMovies] = useState(Data);
+    // const [movies, setMovies] = useState(dummyData);
+    // useEffect(() =>{
+    //     let simulateLoading = setTimeout(() => setMovies(Data), 4000);
+    //     return () =>{
+    //         clearTimeout(simulateLoading);
+    //     }
+    // }, [])
     return(
         <Parent>
             <SmallHeading text="Must Watch" /><br /><br />

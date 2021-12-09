@@ -470,7 +470,7 @@ const Profile = (props) =>{
                     let d = new Date(user.joinedAt);
                     let j = timeSince(d);
                     let findfriend = undefined;
-                    if(myUser !== "") findfriend = myUser.friends.find((id) => id === user._id);
+                    if(myUser !== "") findfriend = myUser.friends.find((id) => id.toString() === user._id.toString());
                     const isFriend = (findfriend !== undefined);
                     setProfile({...user, joinedAt : j + " ago", isFriend });
                 }

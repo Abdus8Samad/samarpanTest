@@ -16,6 +16,7 @@ import Movie from "./Movie/Movie";
 import Register from "./Register/Register";
 import Profile from "./Profile/Profile";
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
+import Categories from "./Categories/Categories";
 
 const MainBody = styled.div`
     position:relative;
@@ -110,6 +111,7 @@ const App = (props) => {
                     <MyRoute exact path="/test" title="Test" component={Test} />
                     <MyRoute exact path="/login" title="Login" component={Login} />
                     <MyRoute exact path="/register" title="SignUp" component={Register} />
+                    <MyRoute exact path="/categories/:name" title="SignUp" component={Categories} />
                     <MyRoute exact path="/profile" title="Profile" component={Profile} />
                     <MyRoute exact path="/profile/:name" title="Profile" component={Profile} />
                     <MyRoute exact path="/movie/:name" title="Movie" component={Movie} />

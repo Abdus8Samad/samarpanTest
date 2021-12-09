@@ -1196,6 +1196,7 @@ const data = [
     pk,
 
 ];
+
 const Movie = require('./models/movie');
 data.forEach((movie) =>{
     Movie.create(movie)

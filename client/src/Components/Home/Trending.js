@@ -13,14 +13,14 @@ const Data = [
         rating:9.2
     },
     {
-        title:"Venom(2021)",
+        title:"Venom: Let There Be Carnage",
         src:"https://m.media-amazon.com/images/M/MV5BNzAwNzUzNjY4MV5BMl5BanBnXkFtZTgwMTQ5MzM0NjM@._V1_.jpg",
         link:"/venom",
         genre:"Sci-fi",
         rating:8.2
     },
     {
-        title:"Cindrella(2021)",
+        title:"Cinderella",
         src:"https://m.media-amazon.com/images/M/MV5BZTk3ZTEzNGUtZTcwYy00NmRmLWFhMGYtZjA4NWY1ZWI4MzMyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1000_.jpg",
         link:"/cindrella",
         genre:"Adventure",
@@ -34,7 +34,7 @@ const Data = [
         rating:9.7
     },
     {
-        title:"No time to die",
+        title:"No Time to Die",
         src:"https://m.media-amazon.com/images/M/MV5BYWQ2NzQ1NjktMzNkNS00MGY1LTgwMmMtYTllYTI5YzNmMmE0XkEyXkFqcGdeQXVyMjM4NTM5NDY@._V1_.jpg",
         link:"/no-time-to-die",
         genre:"Action",
@@ -55,7 +55,7 @@ const Data = [
         rating:9.4
     },
     {
-        title:"Candy Man",
+        title:"Candyman",
         src:"https://m.media-amazon.com/images/M/MV5BMzc4YzBiZTItMDVhYi00MzhkLTllNmItZTgyYTFkY2E2MGU3XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg",
         link:"/candyman",
         genre:"Thriller",
@@ -84,13 +84,14 @@ const Parent = styled.div`
 `;
 
 const Trending = () =>{
-    const [movies, setMovies] = useState(dummyData);
-    useEffect(() =>{
-        let simulateLoading = setTimeout(() => setMovies(Data), 4000);
-        return () =>{
-            clearTimeout(simulateLoading);
-        }
-    }, [])
+    const [movies, setMovies] = useState(Data);
+    // const [movies, setMovies] = useState(dummyData);
+    // useEffect(() =>{
+    //     let simulateLoading = setTimeout(() => setMovies(Data), 4000);
+    //     return () =>{
+    //         clearTimeout(simulateLoading);
+    //     }
+    // }, [])
     return(
         <Parent>
             <SmallHeading text="Trending" /><br /><br />

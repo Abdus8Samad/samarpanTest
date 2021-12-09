@@ -243,7 +243,7 @@ const Main = ({ props }) =>{
 const LoggedIn = () =>{
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() =>{
-        enqueueSnackbar("Already Logged In !", { variant : "warning" });
+        // enqueueSnackbar("Already Logged In !", { variant : "warning" });
     }, []);
     return(
         <Redirect to='/' />

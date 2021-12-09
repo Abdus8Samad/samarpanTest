@@ -4,10 +4,10 @@ import axios from 'axios';
 import styled from 'styled-components';
 import Waiting from '../global/Waiting';
 import { withRouter } from 'react-router';
-import demonslayerwall from '../images/demonSlayerWall.png';
 import Reviews from './Reviews';
 import TopBox from './TopBox';
 import Details from './Details';
+import demonslayerwall from '../images/demonSlayerWall.png';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -37,7 +37,6 @@ const Movie = (props) =>{
     const [movie, setMovie] = useState("");
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() =>{
-        console.log("Movie");
         const { name } = props.match.params;
         axios.get(`/movie/getMovie/${name}`)
         .then(res =>{

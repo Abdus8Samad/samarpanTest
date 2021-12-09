@@ -1,6 +1,18 @@
 const app = require('express').Router();
 Movie = require('../models/movie');
 
+app.get('/getGenre/:name', (req, res) =>{
+    const { name } = req.params;
+    Movie.find({genres: {$elemMatch: name}})
+    .then(movies =>{
+        res.json({status: 200, movies});
+    })
+    .catch(err =>{
+        console.log(err);
+        res.json({ status: 500, err });
+    })
+});
+
 app.get('/getMovie/:name', (req, res) =>{
     const { name } = req.params;
     Movie.findOne({ title: name })
@@ -19,7 +31,9 @@ app.get('/getMovie/:name', (req, res) =>{
 
 app.post('/:name/rate',(req,res) => {
     const { rate } = req.body, { name } = req.params, user = req.user;
-    console.log(req.body);
+    if(user === undefined){
+        res.json({ status : 401, msg: 'Please Login First !' });
+    }
     Movie.findOne({ title : name})
     .then(async (movie) => {
         if(!movie){
@@ -31,17 +45,17 @@ app.post('/:name/rate',(req,res) => {
                 user: user._id
             };
             if(user.isCritic){
-                let Dumid = movie.ratedBy.critics.find(rating => rating.user === user._id);
+                let Dumid = movie.ratedBy.critics.find(rating => rating.user.toString() === user._id.toString());
                 if(Dumid === undefined){
                     movie.ratedBy.critics.push(rateobj);
                 }
                 else{
-                    const index = movie.ratedBy.critics.indexexOf(Dumid);
+                    const index = movie.ratedBy.critics.indexOf(Dumid);
                     movie.ratedBy.critics[index].rating = rateobj.rating;
                 }
             }
             else{
-                let Dumid = movie.ratedBy.users.find(rating => rating.user === user._id);
+                let Dumid = movie.ratedBy.users.find(rating => rating.user.toString() === user._id.toString());
                 console.log(Dumid);
                 if(Dumid === undefined){
                     movie.ratedBy.users.push(rateobj);
@@ -58,13 +72,14 @@ app.post('/:name/rate',(req,res) => {
     .catch(err => {
         console.log(err);
         res.json({ status : 502, err });
-    })
-    
+    })  
 })
 
 app.post('/:name/review', (req, res) =>{
     const { review } = req.body, { name } = req.params, user = req.user;
-    console.log(review);
+    if(user === undefined){
+        res.json({ status : 401, msg: 'Please Login First !' });
+    }
     Movie.findOne({ title: name })
     .then(async (movie) =>{
         if(!movie){
@@ -77,7 +92,6 @@ app.post('/:name/review', (req, res) =>{
                 avatar: user.avatar,
                 date:Date.now()
             };
-            console.log(newReview.body);
             let reviewed = movie.reviews.find(review => review.author === user.username);
             if(reviewed === undefined){
                 movie.reviews.push(newReview);
@@ -86,7 +100,6 @@ app.post('/:name/review', (req, res) =>{
                 movie.reviews[index].body = review;
             }
             await movie.save();
-            console.log(movie.reviews);
             res.json({ status: 200, msg:"Reviewed Successfully" });
         }
     })
