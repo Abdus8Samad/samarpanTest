@@ -1,6 +1,7 @@
 
-const app = require('express').Router(),
-upload = require('../utils/upload'),
+const express = require('express');
+const app = express.Router();
+const upload = require('../utils/upload'),
 User = require('../models/user'),
 passport = require('passport');
 
@@ -58,7 +59,6 @@ app.post('/register', (req, res) =>{
 app.post('/login', passport.authenticate('local'),(req, res) =>{
     res.json({user: req.user, status: 200 });
 })
-
 
 app.post('/logout', (req, res) =>{
     req.logOut();

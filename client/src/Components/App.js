@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, withRouter } from "react-router";
 import { Helmet } from 'react-helmet';
-import { useSetUser, useUser } from "./Contexts/User";
+import { useMisc, useSetMisc } from "./Contexts/misc";
 import { useSnackbar } from "notistack";
-import { useLoading, useSetLoading } from "./Contexts/LoadingState";
 import { scrollingEffect } from "./utils/scrollingEffect";
 import axios from "axios";
 import styled from 'styled-components';
@@ -17,6 +16,7 @@ import Register from "./Register/Register";
 import Profile from "./Profile/Profile";
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import Categories from "./Categories/Categories";
+import { useSetUser, useUser } from "./Contexts/user";
 
 const MainBody = styled.div`
     position:relative;
@@ -45,22 +45,18 @@ const ScrollToTop = styled.p`
 
 const App = (props) => {
     const { enqueueSnackbar } = useSnackbar();
-    const [topTitle, setTopTitle] = useState("Home");
-    const [RemoveTopbar, setRemoveTopbar] = useState(false);
-    const [isFooter, setFooter] = useState(true);
-    const User = useUser();
+    const misc = useMisc();
     const setUser = useSetUser();
-    const Loading = useLoading();
-    const setLoading = useSetLoading();
+    const setMisc = useSetMisc();
     const getUser = () =>{
         axios.get('/auth/getUser')
         .then(res =>{
             setUser(res.data);
-            setLoading({...Loading, user : true});
+            setMisc({...misc, userLoaded: true});
         })
         .catch(err =>{
             console.log(err);
-            setLoading({...Loading, user : true});
+            setMisc({...misc, userLoaded: true});
             enqueueSnackbar(err.response.status + " Internal Server Error !", { variant : "error" });
         })
     }
@@ -69,7 +65,6 @@ const App = (props) => {
         let imgs = document.querySelectorAll('img');
         for(let img of imgs) img.loading = "lazy";
         /* -------------------------- */
-        getUser();
         scrollingEffect();
         window.addEventListener('load', () => scrollingEffect());
         window.addEventListener('scroll', () => scrollingEffect());
@@ -78,53 +73,35 @@ const App = (props) => {
             window.removeEventListener('scroll', () => scrollingEffect());
         }
     }, []);
-    const MyRoute = (attr) =>{
-        useEffect(() =>{
-            if(attr.path.substr(0, 8) === "/profile" || attr.path.substr(0, 6) === "/movie"){
-                if(attr.path.substr(0, 6) === "/movie") setFooter(true);
-                setRemoveTopbar(true);
-            } else {
-                setRemoveTopbar(false);
-                setFooter(false);
-                if(attr.path === "/login" || attr.path === "/register"){
-                    setRemoveTopbar(true);
-                } else {
-                    setRemoveTopbar(false);
-                    setFooter(false);
-                }
-            }
-            setTopTitle(attr.title);
-        }, []);
-        return <Route exact path={attr.path} title={attr.title} component={attr.component} />;
-    }
+    useEffect(() =>{
+        if(!misc.userLoaded){
+            getUser();
+        }
+    })
     const scrollTop = () =>{
         window.scrollTo({
-            top: 0, 
+            top: 0,
             behavior: 'smooth'
         });
     }
     return(
         <div className="App">
-            <Helmet><title>{topTitle} - Samarpan</title></Helmet>
+            <Helmet><title>{misc.title} - Samarpan</title></Helmet>
             <MainBody>
                 <Switch>
-                    <MyRoute exact path="/test" title="Test" component={Test} />
-                    <MyRoute exact path="/login" title="Login" component={Login} />
-                    <MyRoute exact path="/register" title="SignUp" component={Register} />
-                    <MyRoute exact path="/categories/:name" title="SignUp" component={Categories} />
-                    <MyRoute exact path="/profile" title="Profile" component={Profile} />
-                    <MyRoute exact path="/profile/:name" title="Profile" component={Profile} />
-                    <MyRoute exact path="/movie/:name" title="Movie" component={Movie} />
-                    <MyRoute exact path="*" title="Home" component={Home} />
+                    <Route exact path="/test" component={Test} />
+                    <Route exact path="/login" component={Login} />
+                    <Route exact path="/register" component={Register} />
+                    <Route exact path="/categories/:name" component={Categories} />
+                    <Route exact path="/profile" component={Profile} />
+                    <Route exact path="/profile/:name" component={Profile} />
+                    <Route exact path="/movie/:name" component={Movie} />
+                    <Route exact path="*" component={Home} />
                 </Switch>
             </MainBody>
             <ScrollToTop onClick={() => scrollTop()} className="scrollToTop" ><ExpandLessRoundedIcon /></ScrollToTop>
-            {RemoveTopbar ? (isFooter ? <Footer /> : "" ) : (
-                <>
-                    <TopBar />
-                    <Footer />
-                </>
-            )}
+            {misc.isFooter ? <Footer /> : <></>}
+            {misc.isTopbar ? <TopBar /> : <></>}
         </div>
     )
 }

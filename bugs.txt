@@ -1,5 +1,6 @@
-1. ScrollEffect.
+1. ScrollEffect (Footer visible at middle sometimes).
 2. Review Back Button.
-3. Multiple Snackbars.
-4. Big images Glitches Page.
-5. Review DP.
+3. HD images Glitches Page.
+4. Review DP.
+5. Pop up stays for too long due to inactivity.
+6. Multiple Snackbars. (Resolved, Ocurred due to MyRouter extra component as a container for Route component)

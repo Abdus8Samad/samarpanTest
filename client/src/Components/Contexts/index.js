@@ -1,17 +1,17 @@
 import React from "react";
-import { UserProvider } from "./User";
+import { MiscProvider } from "./misc";
 import  { SnackbarProvider } from 'notistack';
-import { LoadingProvider } from "./LoadingState";
+import { UserProvider } from "./user";
 
 const ContextsProvider = ({children}) =>{
     return(
-        <UserProvider>
-            <LoadingProvider>
+        <MiscProvider>
+            <UserProvider>
                 <SnackbarProvider>
                     {children}
                 </SnackbarProvider>
-            </LoadingProvider>
-        </UserProvider>
+            </UserProvider>
+        </MiscProvider>
     )
 }
 

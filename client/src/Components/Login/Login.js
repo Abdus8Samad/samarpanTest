@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Backdrop, CircularProgress, FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
-import { useSetUser, useUser } from '../Contexts/User';
+import { useMisc, useSetMisc } from '../Contexts/misc';
 import { Redirect, withRouter } from 'react-router';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useLoading } from '../Contexts/LoadingState';
 import Waiting from '../global/Waiting';
+import { useSetUser, useUser } from '../Contexts/user';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -103,7 +103,7 @@ const Bottom = styled.p`
     }
 `;
 
-const Main = ({ props }) =>{
+const Main = ({ props, setLeaving }) =>{
     const { enqueueSnackbar } = useSnackbar();
     const [values, setValues] = useState({
         username: '',
@@ -136,9 +136,10 @@ const Main = ({ props }) =>{
                 enqueueSnackbar(`${status} Internal Server Error !`, { variant : "error" });
                 setValues({...values, submit:false});
             } else {
-                enqueueSnackbar(`Welcome ${user.username} !`, { variant : "success" });
-                props.history.goBack();
+                setLeaving(true);
                 setUser(user);
+                enqueueSnackbar(`Welcome ${user.username} !`, { variant : "success" });
+                props.history.push("/");
             }
         })
         .catch(err =>{
@@ -242,20 +243,27 @@ const Main = ({ props }) =>{
 
 const LoggedIn = () =>{
     const { enqueueSnackbar } = useSnackbar();
-    useEffect(() =>{
-        // enqueueSnackbar("Already Logged In !", { variant : "warning" });
-    }, []);
+    enqueueSnackbar("Already Logged In !", { variant : "warning" });
     return(
         <Redirect to='/' />
     )
 }
 
 const Login = (props) =>{
-    const User = useUser();
-    const Loading = useLoading();
+    const misc = useMisc();
+    const setMisc = useSetMisc();
+    const user = useUser();
+    const [leaving, setLeaving] = useState(false);
+    useEffect(() =>{
+        setMisc({...misc, isFooter: false, isTopbar: false});
+        return () =>{
+            setMisc({...misc, isFooter: true, isTopbar: true});
+        }
+    }, [])
     return(
-        (!Loading.user) ? (<Waiting open={true} />) : (
-            (User !== "") ? (<LoggedIn />) : (<Main props={props} />)
+        (!misc.userLoaded) ? (<Waiting open={true} />) :
+        (
+            (user !== "" && !leaving) ? (<LoggedIn />) : (<Main props={props} setLeaving={(e) => setLeaving(e)} />)
         )
     )
 }

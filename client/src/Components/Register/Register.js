@@ -6,13 +6,18 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom';
 import { AddCircleOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Redirect, withRouter } from 'react-router';
-import { useSetUser, useUser } from '../Contexts/User';
+import { useMisc, useSetMisc } from '../Contexts/misc';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import FaceIcon from '@mui/icons-material/Face';
-import { useLoading } from '../Contexts/LoadingState';
 import Waiting from '../global/Waiting';
+import { useSetUser, useUser } from '../Contexts/user';
+
+// this gives the error
+// Uncaught TypeError: Cannot read properties of undefined (reading 'prototype')
+// at ./node_modules/express/lib/response.js (response.js:42:1)
+// this line -> import e from 'express';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -114,14 +119,14 @@ const Bottom = styled.p`
 const LoggedIn = () =>{
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() =>{
-        // enqueueSnackbar("Already Logged In !", { variant : "warning" });
+        enqueueSnackbar("Already Logged In !", { variant : "warning" });
     }, [])
     return(
         <Redirect to='/' />
     )
 }
 
-const Main = ({props}) =>{
+const Main = ({ props, setLeaving }) =>{
     const { enqueueSnackbar } = useSnackbar();
     const setUser = useSetUser();
     const [values, setValues] = useState({
@@ -173,6 +178,7 @@ const Main = ({props}) =>{
                 setValues({...values, submit: false});
             } else if(status !== 500) {
                 if(status === "okwitherror") enqueueSnackbar("There was some error with the image", { variant : "warning" });
+                setLeaving(true);
                 setUser(user);
                 enqueueSnackbar(`Welcome ${user.username}`, { variant : "success" });
                 enqueueSnackbar(`Congrats You Got 10 Points For Joining Us !`, { variant : "success" });
@@ -320,11 +326,19 @@ const Main = ({props}) =>{
 }
 
 const Register = (props) =>{
-    const User = useUser();
-    const Loading = useLoading();
+    const misc = useMisc();
+    const user = useUser();
+    const setMisc = useSetMisc();
+    const [leaving, setLeaving] = useState(false);
+    useEffect(() =>{
+        setMisc({...misc, isFooter: false, isTopbar: false});
+        return () =>{
+            setMisc({...misc, isFooter: true, isTopbar: true});
+        }
+    }, [])
     return(
-        (!Loading.user) ? (<Waiting open={true} />) : (
-            (User !== "") ? (<LoggedIn />) : (<Main props={props} />)
+        (!misc.userLoaded) ? (<Waiting open={true} />) : (
+            (user !== "" && !leaving) ? (<LoggedIn />) : (<Main props={props} setLeaving={(e) => setLeaving(e)} />)
         )
     )
 }

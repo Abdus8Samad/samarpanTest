@@ -1,19 +1,18 @@
-import React, { useState, useContext } from 'react'
+import { createContext, useContext, useState } from "react";
 
-const UserContext = React.createContext();
-const SetUserContext = React.createContext();
+const UserContext = createContext();
+const SetUserContext = createContext();
 
 export const useUser = () => useContext(UserContext);
-
 export const useSetUser = () => useContext(SetUserContext);
 
 export const UserProvider = ({children}) =>{
     const [user, setUser] = useState("");
     return(
-        <UserContext.Provider value={user}>
-            <SetUserContext.Provider value={(e, val) => setUser(e, val)}>
+        <SetUserContext.Provider value={(e) => setUser(e)}>
+            <UserContext.Provider value={user}>
                 {children}
-            </SetUserContext.Provider>
-        </UserContext.Provider>
+            </UserContext.Provider>
+        </SetUserContext.Provider>
     )
 }

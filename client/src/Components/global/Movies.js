@@ -9,9 +9,9 @@ const media = (width) => `@media only screen and (max-width:${width}px)`;
 const Parent = styled.div`
     display:flex;
     flex-flow:row wrap;
-    width:85vw;
+    width:95vw;
     margin:auto;
-    align-items:center;
+    align-items:flex-end;
     gap:20px 10px;
     justify-content:space-around;
 `;
@@ -21,9 +21,14 @@ const Poster = styled.img`
 `;
 
 const Info = styled.div`
-    width:100%;
+    // position:absolute;
+    // bottom:0;
+    // width:100%;
     span.rating{
+        display:flex;
+        align-items:center;
         float:left;
+        font-size:13px !important;
     }
     span.genre{
         float:right;
@@ -41,8 +46,9 @@ const Chip = styled.div`
 `;
 
 const Paper = styled(Link)`
+    position:relative;
     color:white;
-    width:20%;
+    width:15%;
     p{
         width:100%;
         font-size:smaller;
@@ -52,7 +58,7 @@ const Paper = styled(Link)`
         transform:scale(1.1);
     }
     ${media(900)}{
-        width:30%;
+        width:25%;
     }
     ${media(600)}{
         width:40%;

@@ -1,7 +1,7 @@
-const User = require('../models/user');
-
-const mongoose = require('mongoose'),
-app = require('express').Router();
+const express = require('express');
+const app = express.Router();
+const User = require('../models/user'),
+mongoose = require('mongoose');
 
 app.post('/addfriend', (req, res) =>{
     if(req.user === "" || req.user === undefined || req.user === null){
@@ -44,14 +44,14 @@ app.post('/removefriend', (req, res) =>{
             User.findOne({username : req.user.username})
             .then(async (user) =>{
                 let isFriend = false;
-                console.log(user.friends[0].equals(friend._id))
+                // console.log(user.friends[0].equals(friend._id))
                 user.friends.find((id) => {
                     if(id.equals(friend._id)){
                         isFriend = true;
                     }
                 })
                 if(!isFriend){
-                    console.log("Already a friend");
+                    console.log("Already not a friend");
                     res.json({ status : 402, msg: "Already not a friend" });
                     return;
                 }

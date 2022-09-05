@@ -1,5 +1,6 @@
-const app = require('express').Router();
-Movie = require('../models/movie');
+const express = require('express');
+const app = express.Router();
+const Movie = require('../models/movie');
 
 app.get('/getGenre/:name', (req, res) =>{
     const { name } = req.params;

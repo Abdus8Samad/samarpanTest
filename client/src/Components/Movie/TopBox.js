@@ -8,7 +8,7 @@ import HoverRating from './Rating';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link } from 'react-router-dom';
 import { UserTag } from './Movie';
-import { useUser } from '../Contexts/User';
+import { useMisc, useUser } from '../Contexts/misc';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -204,7 +204,7 @@ const UserIcon = styled(Link)`
 // `;
 
 const TopBox = ({ movie, parentProps }) =>{
-    const User = useUser();
+    const { user : User } = useMisc();
     return(
         <Parent back={movie.wall}>
         <Content>

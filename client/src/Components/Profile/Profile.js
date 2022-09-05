@@ -2,19 +2,20 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router";
 import styled from 'styled-components';
-import { useSetUser, useUser } from "../Contexts/User";
 import { useSnackbar } from "notistack";
 import timeSince from "../utils/TimeSince";
 import { ResolveLevel } from "../utils/ResolveLevel";
+import LoginAlert from '../global/LoginAlert';
 import { Avatar, Tooltip } from "@mui/material";
+import { Link } from "react-router-dom";
+import Waiting from "../global/Waiting";
+import { useMisc, useSetMisc } from "../Contexts/misc";
+import { useSetUser, useUser } from '../Contexts/user';
+import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useLoading } from "../Contexts/LoadingState";
-import { Link } from "react-router-dom";
-import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
-import Waiting from "../global/Waiting";
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -234,8 +235,9 @@ export const Top = styled.div`
     }
 `;
 
-const Main = ({ props, profile, setProfile, personal, myUser }) =>{
+const Main = ({ props, profile, setProfile, personal, setLoggingOut }) =>{
     const { enqueueSnackbar } = useSnackbar();
+    const user = useUser();
     const setUser = useSetUser();
     const [friendState, setFriendState] = useState({
         addingFriend: false,
@@ -244,6 +246,7 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
     const logout = () =>{
         axios.post('/auth/logout')
         .then(res =>{
+            setLoggingOut(true);
             setUser("");
             enqueueSnackbar("Successfully logged out!", { variant : "success" });
             props.history.push("/");
@@ -258,10 +261,10 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
             axios.post('/profile/addfriend', {
                 username : profile.username
             }).then(res =>{
-                const { user } = res.data;
+                const { user: userFetched } = res.data;
                 enqueueSnackbar(`${profile.username} added as friend`, { variant : "success" });
                 setProfile({...profile, isFriend : true});
-                setUser(user);
+                setUser(userFetched);
                 setFriendState({...friendState, addingFriend : false});
             }).catch(err =>{
                 console.log(err);
@@ -276,10 +279,10 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
             axios.post('/profile/removefriend', {
                 username : profile.username
             }).then(res =>{
-                const { user } = res.data;
+                const { user: userFetched } = res.data;
                 enqueueSnackbar(`${profile.username} removed as friend`, { variant : "success" });
                 setProfile({...profile, isFriend : false});
-                setUser(user);
+                setUser(userFetched);
                 setFriendState({...friendState, removingFriend : false});
             }).catch(err =>{
                 console.log(err);
@@ -357,7 +360,7 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
                         <p>{profile.score < 0 ? "" : `Review score : ${profile.score}`}</p>
                         <p className="friends">
                             Friend of {profile.friends.length} users&nbsp;&nbsp;
-                            {(!personal && myUser !== "") ? (
+                            {(!personal && user !== "") ? (
                                 <>
                                     {(!profile.isFriend) ? (
                                         <Tooltip title="Add Friend">
@@ -425,8 +428,10 @@ const Main = ({ props, profile, setProfile, personal, myUser }) =>{
 }
 
 const Profile = (props) =>{
-    const Loading = useLoading();
-    const myUser = useUser();
+    const misc = useMisc();
+    const setMisc = useSetMisc();
+    const user = useUser();
+    const [loggingOut, setLoggingOut] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
     const [personal, setPersonal] = useState(false);
     const [profile, setProfile] = useState({
@@ -442,37 +447,38 @@ const Profile = (props) =>{
         isFriend: false,
     });
     useEffect(() =>{
+        setMisc({...misc, isFooter: false, isTopbar: false});
         const { name } = props.match.params;
         if(name === undefined){
-            if(myUser !== ""){
-                let d = new Date(myUser.joinedAt);
+            if(user !== ""){
+                let d = new Date(user.joinedAt);
                 let j = timeSince(d);
-                setProfile({...myUser, joinedAt : j + " ago"});
+                setProfile({...user, joinedAt : j + " ago"});
                 setPersonal(true);
             } else {
                 enqueueSnackbar("You need to login first !", { variant : "warning" });
                 props.history.push("/login");
             }
         }
-        else if(name === myUser.username){
-            let d = new Date(myUser.joinedAt);
+        else if(name === user.username){
+            let d = new Date(user.joinedAt);
             let j = timeSince(d);
-            setProfile({...myUser, joinedAt : j + " ago"});
+            setProfile({...user, joinedAt : j + " ago"});
             setPersonal(true);
         } else {
             axios.get(`/auth/getUser/${name}`)
             .then(req =>{
-                const { user, status } = req.data;
+                const { user : userFetched, status } = req.data;
                 if(status === 404){
                     enqueueSnackbar("User Not Found!", { variant : "error" });
                     props.history.push("/");
                 } else {
-                    let d = new Date(user.joinedAt);
+                    let d = new Date(userFetched.joinedAt);
                     let j = timeSince(d);
                     let findfriend = undefined;
-                    if(myUser !== "") findfriend = myUser.friends.find((id) => id.toString() === user._id.toString());
+                    if(userFetched !== "") findfriend = userFetched.friends.find((id) => id.toString() === userFetched._id.toString());
                     const isFriend = (findfriend !== undefined);
-                    setProfile({...user, joinedAt : j + " ago", isFriend });
+                    setProfile({...userFetched, joinedAt : j + " ago", isFriend });
                 }
             })
             .catch(err =>{
@@ -481,15 +487,18 @@ const Profile = (props) =>{
                 props.history.push("/");
             })
         }
+        return () =>{
+            setMisc({...misc, isFooter: true, isTopbar: true});
+        }
     }, []);
     return(
-        (!Loading.user || profile.popularity === "0%" ) ? (<Waiting open={true} />) : (
+        (!misc.userLoaded) ? (<Waiting open={true} />) : (
             <Main
                 props={props}
                 profile={profile}
+                setLoggingOut={() => setLoggingOut()}
                 setProfile={() => setProfile()}
                 personal={personal}
-                myUser={myUser}
             />
         )
     )

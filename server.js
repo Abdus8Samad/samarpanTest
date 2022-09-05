@@ -1,6 +1,6 @@
-const express = require('express'),
-app = express(),
-path = require('path'),
+const express = require('express');
+const app = express();
+const path = require('path'),
 mongoose = require('mongoose'),
 connect = mongoose.connect,
 morgan = require('morgan'),

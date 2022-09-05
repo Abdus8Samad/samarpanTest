@@ -8,6 +8,7 @@ import Reviews from './Reviews';
 import TopBox from './TopBox';
 import Details from './Details';
 import demonslayerwall from '../images/demonSlayerWall.png';
+import { useMisc, useSetMisc } from '../Contexts/misc';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -36,6 +37,8 @@ const Main = ({ movie, props }) =>{
 const Movie = (props) =>{
     const [movie, setMovie] = useState("");
     const { enqueueSnackbar } = useSnackbar();
+    const misc = useMisc();
+    const setMisc = useSetMisc();
     useEffect(() =>{
         const { name } = props.match.params;
         axios.get(`/movie/getMovie/${name}`)
@@ -56,6 +59,10 @@ const Movie = (props) =>{
             enqueueSnackbar("Some error ocurred !", { variant : "error" }); 
             props.history.goBack();
         })
+        setMisc({...misc, isFooter: true, isTopbar: false});
+        return () =>{
+            setMisc({...misc, isFooter: true, isTopbar: true});
+        }
     }, [])
     return(
         (movie === "") ? (<Waiting open={true} />) : (

@@ -2,7 +2,7 @@ import { Avatar } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useUser } from './Contexts/User';
+import { useUser } from './Contexts/user';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -88,7 +88,7 @@ const TopBar = () =>{
     return(
         <Parent>
             <List>
-                <Links to='#' onClick={""}>Categories</Links>
+                <Links to='#'>Categories</Links>
                 <Links to='/categories/movies'>Movies</Links>
                 {/* <Logo to='/' className="logo">Samarpan&trade;</Logo> */}
                 <Links to='/categories/animation'>Animation</Links>

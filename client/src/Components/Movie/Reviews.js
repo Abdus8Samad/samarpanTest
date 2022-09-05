@@ -11,7 +11,7 @@ import timeSince from '../utils/TimeSince';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import MyButton from '../global/MyButton';
-import { useUser } from '../Contexts/User';
+import { useMisc, useUser } from '../Contexts/misc';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -187,7 +187,7 @@ const Reviews = ({ parentProps, movie }) =>{
     const [orderBy, setOrderBy] = useState("Latest");
     const [review, setReview] = useState("");
     const { enqueueSnackbar } = useSnackbar();
-    const user = useUser();
+    const { user } = useMisc();
     const DateAsc = (a, b) =>{
         console.log("DateAsc");
         a = new Date(a.date).getMilliseconds();

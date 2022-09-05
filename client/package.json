@@ -1,41 +1,51 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "my-webpack-project",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.4.1",
-    "@emotion/styled": "^11.3.0",
-    "@mui/icons-material": "^5.0.0",
-    "@mui/material": "^5.0.0",
-    "@mui/styled-engine-sc": "^5.0.0",
-    "@testing-library/jest-dom": "^5.14.1",
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.3",
+    "@mui/material": "^5.10.3",
+    "@mui/styled-engine-sc": "^5.10.3",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.4",
-    "bootstrap": "^5.1.0",
-    "notistack": "^2.0.2",
+    "bootstrap": "^5.2.0",
+    "fs": "0.0.1-security",
+    "net": "^1.0.2",
+    "node-polyfill-webpack-plugin": "^1.1.4",
+    "notistack": "^2.0.5",
     "react": "^16.14.0",
-    "react-bootstrap": "^2.0.0-beta.6",
+    "react-bootstrap": "^2.5.0",
     "react-dom": "^16.14.0",
     "react-helmet": "^6.1.0",
     "react-responsive-carousel": "^3.2.21",
-    "react-router": "^5.2.1",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "4.0.3",
+    "react-router": "^5.3.3",
+    "react-router-dom": "^5.3.3",
+    "react-scripts": "^5.0.1",
     "styled-components": "^5.3.1",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "webpack --mode=production --node-env=production",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "env": {
+      "browser": true,
+      "node": true
+    }
   },
   "browserslist": {
     "production": [
@@ -50,10 +60,34 @@
     ]
   },
   "devDependencies": {
-    "sass": "^1.41.1"
+    "@babel/core": "^7.18.13",
+    "@babel/preset-env": "^7.18.10",
+    "@webpack-cli/generators": "^2.5.0",
+    "assert": "^2.0.0",
+    "babel-loader": "^8.2.5",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "https-browserify": "^1.0.0",
+    "mini-css-extract-plugin": "^2.6.1",
+    "os-browserify": "^0.3.0",
+    "prettier": "^2.7.1",
+    "process": "^0.11.10",
+    "react-app-rewired": "^2.2.1",
+    "sass": "^1.54.8",
+    "sass-loader": "^12.6.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "style-loader": "^3.3.1",
+    "url": "^0.11.0",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "workbox-webpack-plugin": "^6.5.4"
   },
   "proxy": "http://localhost:10005",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "description": "My webpack project"
 }
