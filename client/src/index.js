@@ -1,16 +1,16 @@
 // import { createRoot } from "react-dom";
 import ContextsProvider from "./Components/Contexts";
 import { BrowserRouter as Router } from 'react-router-dom';
-import ReactDOM from "react-dom";
-import App from "./Components/App";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import './index.scss';
+import App from './App';
 
-// const rootElement = ReactDOM.createRoot(document.getElementById("root"));
-// const root = createRoot(rootElement);
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
     <ContextsProvider>
         <Router>
             <App />
         </Router>
     </ContextsProvider>
-, document.getElementById("root"));
+);

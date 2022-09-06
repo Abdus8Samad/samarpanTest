@@ -1,8 +1,8 @@
 
 const express = require('express');
 const app = express.Router();
-const upload = require('../utils/upload'),
-User = require('../models/user'),
+// const upload = require('../utils/upload'),
+const User = require('../models/user'),
 passport = require('passport');
 
 app.get("/getUser", (req, res) =>{

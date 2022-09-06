@@ -8,7 +8,7 @@ import HoverRating from './Rating';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link } from 'react-router-dom';
 import { UserTag } from './Movie';
-import { useMisc, useUser } from '../Contexts/misc';
+import { useUser } from '../Contexts/user';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -204,7 +204,7 @@ const UserIcon = styled(Link)`
 // `;
 
 const TopBox = ({ movie, parentProps }) =>{
-    const { user : User } = useMisc();
+    const User  = useUser();
     return(
         <Parent back={movie.wall}>
         <Content>
@@ -213,7 +213,7 @@ const TopBox = ({ movie, parentProps }) =>{
                     onMouseDown={() => parentProps.history.goBack()}
                 ><ArrowBackIcon /></Button>
             </Tooltip>
-            <UserIcon to={(User === "") ? "/login" : `/profile/${User.username}`} className="user"><Avatar src={(User !== "") ? (User.avatar) : ("https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png")} /></UserIcon>
+            {/* <UserIcon to={(User === "") ? "/login" : `/profile/${User.username}`} className="user"><Avatar src={(User !== "") ? (User.avatar) : ("https://img.icons8.com/external-becris-flat-becris/64/000000/external-user-avatars-becris-flat-becris.png")} /></UserIcon> */}
             <MainContent>
                 <MovieInfo>
                     <Desc>{movie.details}<br /><br />Genre: {movie.genres.map(g => <Genre key={uuidv4()}>{g}</Genre>)}</Desc>

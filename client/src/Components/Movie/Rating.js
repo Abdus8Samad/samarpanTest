@@ -5,10 +5,10 @@ import Box from '@mui/material/Box';
 import StarIcon from '@mui/icons-material/Star';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
-import { useMisc } from '../Contexts/misc';
 import { Avatar, Dialog, DialogContent, DialogTitle, TextField, Tooltip, Typography } from '@mui/material';
 import { UserTag } from './Movie';
 import MyButton from '../global/MyButton';
+import { useUser } from '../Contexts/user';
 
 const media = (width) => `@media only screen and (max-width:${width}px)`;
 
@@ -101,7 +101,7 @@ const HoverRating = ({ movie, title, parentProps }) => {
     const [reviewDialog, setReviewDialog] = useState(false);
     const [rating, setRating] = useState(0);
     const [review, setReview] = useState("");
-    const { user } = useMisc();
+    const user = useUser();
     const { enqueueSnackbar } = useSnackbar();
     const login = () =>{
         enqueueSnackbar("401: Please Login First !", { variant: "warning" });

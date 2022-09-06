@@ -148,7 +148,7 @@ const demonSlayer = {
     ]
 };
 
-const Movie = require('./models/movie');
+// const Movie = require('./models/movie');
 // const kunal = require('./kunal');
 // const vans = require('./vans');
 // const ravi = require('./ravi');
