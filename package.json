@@ -68,6 +68,6 @@
     "@parcel/transformer-image": "^2.0.0",
     "@parcel/transformer-sass": "^2.2.1",
     "@parcel/transformer-webmanifest": "^2.0.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.20"
   }
 }
