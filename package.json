@@ -1,73 +1,23 @@
 {
-  "name": "samarpan",
-  "version": "1.0.0",
-  "type": "commonjs",
-  "description": "Movie Review Website",
-  "main": "server.js",
-  "browser": {
-    "crypto": false,
-    "fs": false,
-    "path": false,
-    "os": false,
-    "net": false,
-    "stream": false,
-    "tls": false
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "concurrently -c blue,green -n React,Server \"cd client && npm start\" \"nodemon\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Abdus8Samad/sem3project.git"
-  },
-  "keywords": [
-    "css",
-    "html",
-    "js",
-    "mern",
-    "webdev",
-    "website"
-  ],
-  "author": "Abdus, Vansh, Ravi, Kunal",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Abdus8Samad/sem3project/issues"
-  },
-  "homepage": "https://github.com/Abdus8Samad/sem3project#readme",
   "dependencies": {
-    "-": "0.0.1",
-    "body-parser": "^1.19.0",
-    "browserify-zlib": "^0.2.0",
-    "concurrently": "^6.2.2",
-    "cookie-parser": "^1.4.5",
+    "-": "^0.0.1",
+    "body-parser": "^1.20.2",
+    "concurrently": "^8.2.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
-    "env": "0.0.2",
-    "express": "^4.17.1",
-    "express-session": "^1.17.2",
+    "dotenv": "^16.3.1",
+    "env": "^0.0.2",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "gzip": "^0.1.0",
-    "mongoose": "^6.0.7",
+    "mongoose": "^7.3.1",
     "morgan": "^1.10.0",
-    "multer": "^1.4.3",
-    "node-mailer": "^0.1.1",
-    "npm": "^8.7.0",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^6.1.0",
+    "passport-local-mongoose": "^8.0.0",
     "path": "^0.12.7",
-    "react-collapse": "^5.1.1",
-    "react-dom": "0.0.0-experimental-bdd6d5064-20211001",
     "react-motion": "^0.5.2",
-    "react-text-collapse": "^0.6.1",
-    "url": "^0.11.0",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "@parcel/transformer-image": "^2.0.0",
-    "@parcel/transformer-sass": "^2.2.1",
-    "@parcel/transformer-webmanifest": "^2.0.0",
-    "nodemon": "^2.0.15"
+    "url": "^0.11.1",
+    "uuid": "^9.0.0"
   }
 }

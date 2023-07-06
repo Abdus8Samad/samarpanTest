@@ -4,3 +4,5 @@
 4. Review DP.
 5. Pop up stays for too long due to inactivity.
 6. Multiple Snackbars. (Resolved, Ocurred due to MyRouter extra component as a container for Route component)
+7. Polyfill.
+8. .env database name.

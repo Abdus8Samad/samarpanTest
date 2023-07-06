@@ -71,17 +71,19 @@ const SAvatar = styled(Avatar)`
 `;
 
 const Img = styled.img`
-    width:23vw;
-    height:23vw;
+    width:19vw;
+    height:19vw;
     min-width:120px;
     border-radius:50%;
 `;
 
 const Container = styled.div`
+    display: flex;
+    flex-flow: row wrap;
+    row-gap: 0;
     position:relative;
     width:90vw;
-    padding:10px 10px 0 10px;
-    min-height:90vh;
+    padding:30px 10px 0 10px;
     margin:40px auto;
     border-radius:20px;
     z-index:40;
@@ -93,26 +95,24 @@ const Container = styled.div`
 
 const Details = styled.div`
     display:flex;
-    width:100%;
-    div:not(.avatar){
-        width:50%;
-    }
+    width:50%;
+    margin:auto;
     justify-content:space-around:
     align-items:center;
     position:relative;
-    top:40px;
-    ${media(700)}{
-        display:block;
-        div:not(.avatar){
-            width:100%;
-            text-align:center;
-        }
+    display:block;
+    div:not(.avatar){
+        width:100%;
+        text-align:center;
+    }
+    ${media(900)}{
+        width:100%;
     }
 `;
 
 const About = styled.div`
     p.name{
-        font-size:2.5rem;
+        font-size:2.2rem;
         span{
             font-size:small;
         }
@@ -134,7 +134,7 @@ const About = styled.div`
     }
     ${media(840)}{
         p.name{
-            font-size:5vw;
+            font-size:4vw;
         }
         font-size:12px;
     }
@@ -148,6 +148,9 @@ const About = styled.div`
 const Achievments = styled.div`
     display:flex;
     flex-flow:row wrap;
+    width:50%;
+    position:relative;
+    margin:auto;
     background:rgba(40, 40, 40, 1);
     justify-content:center;
     border-radius:20px;
@@ -155,6 +158,10 @@ const Achievments = styled.div`
     div{
         text-align:center;
         padding:0 3.5%;
+    }
+    ${media(900)}{
+        width:100%;
+        top:-40px;
     }
     ${media(600)}{
         font-size:smaller;
@@ -337,7 +344,7 @@ const Main = ({ props, profile, setProfile, personal, setLoggingOut }) =>{
                             personal={personal}
                             onClick={() => uploadAvatar()}
                             className="avatar"
-                            sx={{width:"23vw", height:"23vw"}}
+                            sx={{width:"19vw", height:"19vw"}}
                             // style={{background:`#313131 url(${profile.avatar}) no-repeat fixed top center`}}
                         >
                             <CameraAltOutlinedIcon />

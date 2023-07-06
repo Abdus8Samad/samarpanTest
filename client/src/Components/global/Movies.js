@@ -49,6 +49,7 @@ const Paper = styled(Link)`
     position:relative;
     color:white;
     width:15%;
+    min-height:200px;
     p{
         width:100%;
         font-size:smaller;
